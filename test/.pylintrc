@@ -1,5 +1,0 @@
-[REPORTS]
-reports=no
-
-[MESSAGES]
-disable=invalid-name, wildcard-import, unused-wildcard-import, missing-docstring
