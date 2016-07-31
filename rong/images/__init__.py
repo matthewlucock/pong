@@ -1,0 +1,21 @@
+import PIL
+import PIL.ImageTk
+
+_IMAGE_PATH = "rong/images/{}.png"
+
+RIGHT_POINTING_ARROW = PIL.Image.open(_IMAGE_PATH.format("arrow"))
+LEFT_POINTING_ARROW = RIGHT_POINTING_ARROW.rotate(180)
+CHECKMARK = PIL.Image.open(_IMAGE_PATH.format("checkmark"))
+PAUSE_GLYPH = PIL.Image.open(_IMAGE_PATH.format("pause"))
+
+TKINTER_USABLE_RIGHT_POINTING_ARROW = PIL.ImageTk.PhotoImage(
+    RIGHT_POINTING_ARROW
+)
+
+TKINTER_USABLE_LEFT_POINTING_ARROW = PIL.ImageTk.PhotoImage(
+    LEFT_POINTING_ARROW
+)
+
+TKINTER_USABLE_CHECKMARK = PIL.ImageTk.PhotoImage(CHECKMARK)
+
+TKINTER_USEABLE_PAUSE_GLYPH = PIL.ImageTk.PhotoImage(PAUSE_GLYPH)

@@ -1,0 +1,5 @@
+LEFT_CLICK = "<Button-1>"
+MOUSEOVER = "<Enter>"
+MOUSEOUT = "<Leave>"
+KEYPRESS = "<KeyPress>"
+KEYRELEASE = "<KeyRelease>"

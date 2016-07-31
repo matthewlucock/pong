@@ -1,0 +1,4 @@
+- better visual style
+    - high contrast mode
+- power-up class
+- help screen
