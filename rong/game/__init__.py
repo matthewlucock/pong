@@ -82,7 +82,7 @@ class Game:
 
         intervals = [self._top_interval, self._bottom_interval] + list(self._player_one_paddle._intervals)
         if game_variables.game_mode.get() == game_modes.ZEN:
-            intervals.append(self._zen_wall.interval)
+            intervals.append(self._zen_wall._interval)
         else:
             intervals += list(self._player_two_paddle._intervals)
 

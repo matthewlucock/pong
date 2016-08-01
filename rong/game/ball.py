@@ -64,7 +64,6 @@ class Ball:
                     #or self._collides_corners(interval[0])
                     #or self._collides_corners(interval[1]
             ):
-                print("Velocity: " + str(self.velocity))
                 moving_towards = self.position + self.velocity
                 point_of_collision = utilities.get_line_collision(self.position, moving_towards, *interval)
                 if utilities.in_direction(
@@ -87,7 +86,6 @@ class Ball:
                         polar_from_collision[0],
                         math.pi - polar_from_collision[1] + 2 * smaller_line_angle
                     )
-                    print(new_polar)
                     location_of_direction_from_collision = utilities.Vector.point_at_polar_from_reference(
                         new_polar,
                         point_of_collision

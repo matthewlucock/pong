@@ -4,6 +4,7 @@ from rong import directions, game_variables, utilities
 class Paddle:
     SIZE = utilities.Vector(30, 150)
     __BASE_VELOCITY = utilities.Vector(1000, 1000)
+    __ROTATION_RATE = 0.1
     __BOUNDARY_PADDING = 50
     __BACKGROUND_COLOR = "#aaa"
 
@@ -133,6 +134,9 @@ class Paddle:
 
         self.velocity = copy.deepcopy(self.__BASE_VELOCITY)
 
+    def rotate(self, rotation):
+        pass
+
     def update_position(self, delta_time, pressed_keys):
         delta_speed = self.velocity.magnitude * delta_time
 
@@ -142,6 +146,12 @@ class Paddle:
         )
         velocity = direction * delta_speed
 
+        rotation = directions.get_rotation_from_keys(
+            keys = pressed_keys,
+            in_right_half = self._in_right_half
+        )
+
+        self.rotate(rotation)
         self.position += velocity
         self.update_position_on_canvas()
 
