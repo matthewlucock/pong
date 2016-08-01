@@ -1,6 +1,9 @@
 import tkinter
 from .vector import Vector
-
+from .physics import get_line_collision
+from .physics import in_direction
+from .physics import point_is_on_line
+from .physics import point_is_on_interval
 
 def pack_widgets_as_vertical_list(
         widgets,

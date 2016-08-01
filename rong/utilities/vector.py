@@ -1,5 +1,10 @@
 import math
 
+def _sign(number):
+    if number == 0:
+        return 0
+    return number / abs(number)
+
 class Vector:
     def __init__(self, x=0, y=0):
         if not isinstance(x, (int, float)) or not isinstance(y, (int, float)):
@@ -46,9 +51,9 @@ class Vector:
 
     @property
     def unit_vector(self):
-        vector = self.copy
+        vector = self.copy()
         vector.normalise()
-        return Vector
+        return vector
 
     @property
     def x_component(self):
@@ -67,7 +72,6 @@ class Vector:
         #Note, if the y axis will be inverted, then, so will the quadrants. (i.e. 0 - PI/2 in the bottom right (0 still being the positive x axis though)).
         if not isinstance(reference_point, Vector):
             raise TypeError("reference_point must be a vector.")
-        r = (self - reference_point).magnitude()
         y_difference = self.y - reference_point.y
         x_difference = self.x - reference_point.x
         if y_difference == 0:
@@ -82,7 +86,10 @@ class Vector:
                 theta = 3/2 * math.pi
         else:
             gradient = y_difference / x_difference
-            theta = sign(x_difference) * math.atan(gradient)
+            if _sign(x_difference) == -1:
+                theta = math.atan(gradient) + math.pi
+            else:
+                theta = math.atan(gradient)
         r = (self - reference_point).magnitude
         return (r, theta)
 
@@ -101,6 +108,20 @@ class Vector:
         x = r * math.cos(theta) + reference_point.x
         y = r * math.sin(theta) + reference_point.y
         return Vector(x, y)
+
+    def set_magnitude(self, magnitude):
+        self.normalise()
+        self *= magnitude
+
+    def get_at_magnitude(self, magnitude):
+        vector = self.unit_vector
+        vector *= magnitude
+        return vector
+
+    def __eq__(self, other):
+        if not isinstance(other, Vector):
+            raise TypeError("other must be a vector")
+        return (self.x == other.x and self.y == other.y)
 
     def __repr__(self):
         return "Vector ({}, {})".format(self.x, self.y)

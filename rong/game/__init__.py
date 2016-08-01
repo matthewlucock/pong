@@ -1,4 +1,4 @@
-from rong import game_variables, event_names, game_modes
+from rong import game_variables, event_names, game_modes, utilities
 from rong.window import window
 from rong.keyboard_handler import KeyboardHandler
 from .clock import Clock
@@ -27,6 +27,18 @@ class Game:
             if game_variables.game_mode.get() != game_modes.MULTIPLAYER:
                 #self._ai = AI(ball=ball, paddle=self._player_two_paddle)
                 pass
+
+        self._top_interval = (
+            utilities.Vector(0, 0),
+            utilities.Vector(self._canvas.winfo_width(), 0)
+        )
+        self._bottom_interval = (
+            utilities.Vector(0, self._canvas.winfo_height()),
+            utilities.Vector(
+                self._canvas.winfo_width(),
+                self._canvas.winfo_height()
+            )
+        )
 
         self._keyboard_handler = KeyboardHandler()
         self._clock = Clock()
@@ -68,7 +80,13 @@ class Game:
                 pressed_keys=self._keyboard_handler.pressed_keys
             )
 
-        self._ball.update_position(delta_time=delta_time)
+        intervals = [self._top_interval, self._bottom_interval] + list(self._player_one_paddle._intervals)
+        if game_variables.game_mode.get() == game_modes.ZEN:
+            intervals.append(self._zen_wall.interval)
+        else:
+            intervals += list(self._player_two_paddle._intervals)
+
+        self._ball.update_position(delta_time, intervals)
 
     def destroy(self):
         self._player_one_paddle.delete()
