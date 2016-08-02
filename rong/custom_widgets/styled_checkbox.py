@@ -29,7 +29,8 @@ class StyledCheckbox(tkinter.Frame):
         )
         self._checkmark_container.pack(
             side=tkinter.LEFT,
-            padx=(0, self.__SPACE_BETWEEN_CHECKMARK_AND_LABEL)
+            padx=(0, self.__SPACE_BETWEEN_CHECKMARK_AND_LABEL),
+            borderwidth=0
         )
 
         self._checkmark = tkinter.Label(

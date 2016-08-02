@@ -49,6 +49,7 @@ _pause_glyph = tkinter.Label(
     master=_pause_button_container,
     image=images.TKINTER_USEABLE_PAUSE_GLYPH,
     background=_PAUSE_BUTTON_COLOR,
+    borderwidth=0
 )
 _pause_glyph.pack(pady=10, padx=10)
 
