@@ -1,11 +1,11 @@
 import random, math
-from rong import utilities
+from rong import utilities, game_variables
 
 class Ball:
     __BASE_RADIUS = 20
     __BACKGROUND_COLOR = "green"
-    __VELOCITY_MULTIPLIER = 250
-    __A_LITTLE_BIT = 0.1
+    __VELOCITY_MULTIPLIER = 350 #250
+    #__A_LITTLE_BIT = 0.1
 
     def __generate_random_starting_velocity(self):
         velocity = utilities.Vector(1, random.random() * 2 - 1)
@@ -90,6 +90,17 @@ class Ball:
                         polar_from_collision[0],
                         math.pi - polar_from_collision[1] + 2 * smaller_line_angle
                     )
+                    
+                    index = intervals.index(interval)
+                    if (
+                            (index == 3 or index == 9)
+                            and not game_variables.free_movement_enabled.get()
+                    ):
+                        new_polar = (
+                            new_polar[0],
+                            self._special_bounce(interval, point_of_collision, True if index == 9 else False)
+                        )
+                    
                     location_of_direction_from_collision = utilities.Vector.point_at_polar_from_reference(
                         new_polar,
                         point_of_collision
@@ -116,6 +127,28 @@ class Ball:
             return ((c - p).magnitude <= r)
         else:
             return ((c - n).magnitude <= r)
+
+    def _special_bounce(self, interval, point_of_collision, right_hand_side):
+        midpoint = utilities.midpoint(interval[0], interval[1])
+        distance_to_0 = (point_of_collision - interval[0]).magnitude
+        distance_to_1 = (point_of_collision - interval[1]).magnitude
+        distance_to_midpoint = (point_of_collision - midpoint).magnitude
+        full_distance = (interval[0] - midpoint).magnitude
+
+        if right_hand_side:
+            if distance_to_0 <= distance_to_1:
+                offset = distance_to_midpoint / full_distance
+            elif distance_to_1 < distance_to_0:
+                offset = -distance_to_midpoint / full_distance
+            angle = math.pi + ((math.pi / 4) * offset)
+        else:
+            if distance_to_0 <= distance_to_1:
+                offset = -distance_to_midpoint / full_distance
+            elif distance_to_1 < distance_to_0:
+                offset = distance_to_midpoint / full_distance
+            angle = (math.pi / 4) * offset
+
+        return angle
 
     '''
     def _collides_path(self, interval):

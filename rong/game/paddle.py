@@ -5,7 +5,7 @@ class Paddle:
     SIZE = utilities.Vector(30, 150)
     __DIAGONAL = SIZE / 2
     __BASE_VELOCITY = utilities.Vector(1000, 1000)
-    __ROTATION_RATE = 5
+    __ROTATION_RATE = 10
     __BOUNDARY_PADDING = 50
     __BACKGROUND_COLOR = "#aaa"
 

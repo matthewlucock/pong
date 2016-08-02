@@ -67,3 +67,6 @@ def displacement_of_collision_of_interval_and_line_to_point_from_reference_from_
     ):
         collision = get_line_collision(reference, point, *interval)
         return collision - point
+
+def midpoint(point1, point2):
+    return Vector((point2.x + point1.x) / 2, (point2.y + point1.y) / 2)
