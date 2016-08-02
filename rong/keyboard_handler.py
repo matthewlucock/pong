@@ -3,12 +3,16 @@ from rong.window import window
 
 class KeyboardHandler:
     def __keypress_calback(self, event):
-        if event.keysym not in self.pressed_keys:
-            self.pressed_keys.append(event.keysym)
+        key_symbol = event.keysym.lower()
+
+        if key_symbol not in self.pressed_keys:
+            self.pressed_keys.append(key_symbol)
 
     def __keyrelease_callback(self, event):
-        if event.keysym in self.pressed_keys:
-            self.pressed_keys.remove(event.keysym)
+        key_symbol = event.keysym.lower()
+
+        if key_symbol in self.pressed_keys:
+            self.pressed_keys.remove(key_symbol)
 
     def __init__(self):
         self.pressed_keys = []
