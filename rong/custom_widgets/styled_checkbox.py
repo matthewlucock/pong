@@ -25,17 +25,17 @@ class StyledCheckbox(tkinter.Frame):
             height=self.__CHECKBOX_SIZE,
             width=self.__CHECKBOX_SIZE,
             borderwidth=5,
-            relief=tkinter.SOLID
+            relief=tkinter.SOLID,
         )
         self._checkmark_container.pack(
             side=tkinter.LEFT,
-            padx=(0, self.__SPACE_BETWEEN_CHECKMARK_AND_LABEL),
-            borderwidth=0
+            padx=(0, self.__SPACE_BETWEEN_CHECKMARK_AND_LABEL)
         )
 
         self._checkmark = tkinter.Label(
             self._checkmark_container,
-            image=images.TKINTER_USABLE_CHECKMARK
+            image=images.TKINTER_USABLE_CHECKMARK,
+            borderwidth=0
         )
 
         self.__set_checkmark_state()

@@ -1,4 +1,5 @@
 import tkinter
+import functools
 from .vector import Vector
 from .physics import get_line_collision
 from .physics import in_direction
