@@ -46,6 +46,37 @@ def get_value_corresponding_to_contrast_level(
     return regular_color
 
 
+def set_tkinter_variable_corresponding_to_tkinter_boolean_variable(
+        variable_to_check,
+        variable_to_set,
+        true_value,
+        false_value
+):
+    if variable_to_check.get():
+        variable_to_set.set(true_value)
+    else:
+        variable_to_set.set(false_value)
+
+
+def link_tkinter_variable_to_tkinter_boolean_variable(
+        variable_to_trace,
+        variable_to_modify,
+        true_value,
+        false_value
+):
+    set_variable = functools.partial(
+        set_tkinter_variable_corresponding_to_tkinter_boolean_variable,
+        variable_to_check=variable_to_trace,
+        variable_to_set=variable_to_modify,
+        true_value=true_value,
+        false_value=false_value
+    )
+
+    set_variable()
+
+    variable_to_trace.trace("w", lambda *args: set_variable())
+
+
 def get_canvas_circle_coordinates(centre, radius):
     radius_vector = Vector(radius, radius)
 
