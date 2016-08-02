@@ -57,6 +57,11 @@ class Ball:
     def delete(self):
         self._canvas.delete(self._canvas_id)
 
+    def collides_with_power_up(self, power_up):
+        return (
+            self.radius + power_up.radius <= (self.position - power_up.position).magnitude
+        )
+
     def _check_bounce(self, intervals):
         for interval in intervals:
             #collided_between_frames = (self._collides_path(interval)
