@@ -30,6 +30,12 @@ class Paddle:
             new_position + self.__DIAGONAL,
             new_position + self.__DIAGONAL.inverted_x
         )
+
+        for point in points:
+            polar = point.get_polar_from_reference(new_position)
+            polar = (polar[0], polar[1] + self.rotation)
+            point = utilities.Vector.point_at_polar_from_reference(polar, new_position)
+
         return points
 
     @property
@@ -142,6 +148,8 @@ class Paddle:
                 )
             )
 
+        self.rotation = 0
+
         self._position = utilities.Vector(
             x_offset,
             self._canvas_size.y / 2
@@ -151,8 +159,6 @@ class Paddle:
             x_offset,
             self._canvas_size.y / 2
         )
-
-        self.rotation = 0
 
         self._canvas_id = canvas.create_polygon(
             *self.__get_polygon_coordinates(),
@@ -168,12 +174,18 @@ class Paddle:
             keys=pressed_keys,
             in_right_half=self._in_right_half
         )
-        velocity = direction * delta_speed
 
         rotation_increment = directions.get_rotation_from_keys(
             keys = pressed_keys,
             in_right_half = self._in_right_half
         )
+
+        if not game_variables.free_movement_enabled.get():
+            direction.x = 0
+            direction.normalise()
+            rotation_increment = 0
+
+        velocity = direction * delta_speed
 
         #self.rotation += rotation_increment
         self.position += velocity
