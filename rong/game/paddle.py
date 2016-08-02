@@ -5,7 +5,7 @@ class Paddle:
     SIZE = utilities.Vector(30, 150)
     __DIAGONAL = SIZE / 2
     __BASE_VELOCITY = utilities.Vector(1000, 1000)
-    __ROTATION_RATE = 0.1
+    __ROTATION_RATE = 5
     __BOUNDARY_PADDING = 50
     __BACKGROUND_COLOR = "#aaa"
 
@@ -24,19 +24,21 @@ class Paddle:
     }
 
     def __new_points(self, new_position):
-        points = (
+        points = [
             new_position + self.__DIAGONAL.inverted,
             new_position + self.__DIAGONAL.inverted_y,
             new_position + self.__DIAGONAL,
             new_position + self.__DIAGONAL.inverted_x
-        )
+        ]
 
+        new_points = []
         for point in points:
             polar = point.get_polar_from_reference(new_position)
             polar = (polar[0], polar[1] + self.rotation)
             point = utilities.Vector.point_at_polar_from_reference(polar, new_position)
+            new_points.append(point)
 
-        return points
+        return new_points
 
     @property
     def position(self):
@@ -48,21 +50,20 @@ class Paddle:
 
         points = self.__new_points(new_position)
 
-        if new_position != self.position:
-            for point in points:
-                for boundary in self._boundaries:
-                    if not utilities.point_is_on_this_side_of_interval(
-                            self.position,
-                            point,
-                            boundary
-                    ):
-                        correction = utilities.displacement_of_collision_of_interval_and_line_to_point_from_reference_from_point(
-                            self.position,
-                            point,
-                            boundary
-                        )
-                        new_position += correction
-                        points = self.__new_points(new_position)
+        for point in points:
+            for boundary in self._boundaries:
+                if not utilities.point_is_on_this_side_of_interval(
+                        self.position,
+                        point,
+                        boundary
+                ):
+                    correction = utilities.displacement_of_collision_of_interval_and_line_to_point_from_reference_from_point(
+                        self.position,
+                        point,
+                        boundary
+                    )
+                    new_position += correction
+                    points = self.__new_points(new_position)
 
         self._position = new_position
         self._top_left_vertex = points[0]
@@ -76,18 +77,6 @@ class Paddle:
             (self._bottom_left_vertex, self._bottom_right_vertex),
             (self._top_left_vertex, self._bottom_left_vertex)
         ]
-
-    '''
-    @property
-    def rotation(self):
-        return self._rotation
-
-    @rotation.setter
-    def rotation(new_rotation):
-        if game_variables.free_movement_enabled.get():
-            if utilities.point_is_on_this_side_of_interval
-                self._rotation = new_rotation
-    '''
 
     def __get_polygon_coordinates(self):
         return (
@@ -169,6 +158,7 @@ class Paddle:
 
     def update_position(self, delta_time, pressed_keys):
         delta_speed = self.velocity.magnitude * delta_time
+        delta_rotation = self.__ROTATION_RATE * delta_time
 
         direction = directions.get_direction_from_keys(
             keys=pressed_keys,
@@ -187,7 +177,7 @@ class Paddle:
 
         velocity = direction * delta_speed
 
-        #self.rotation += rotation_increment
+        self.rotation += rotation_increment * delta_rotation
         self.position += velocity
         self.update_position_on_canvas()
 
