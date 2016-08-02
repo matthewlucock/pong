@@ -1,32 +1,47 @@
 import tkinter
-from rong import fonts, event_names
+from rong import colors, fonts, event_names, utilities
 
 
 class StyledButton(tkinter.Label):
-    __BACKGROUND_COLOR = "#aaa"
-    __MOUSEOVER_BACKGROUND_COLOR = "#777"
+    def __set_standard_background(self):
+        self.config(background=colors.button_background.get())
 
-    def __mouseover_callback(self, *args):
-        self.config(background=self.__MOUSEOVER_BACKGROUND_COLOR)
+    def __set_mousover_background(self):
+        self.config(background=colors.button_mouseover_background.get())
 
-    def __mouseout_callback(self, *args):
-        self.config(background=self.__BACKGROUND_COLOR)
+    def __set_text_color(self):
+        self.config(foreground=colors.button_text.get())
 
     def __init__(self, master, text):
         super().__init__(
             master=master,
             text=text,
             font=fonts.button_font,
-            background=self.__BACKGROUND_COLOR,
             borderwidth=10,
             relief=tkinter.SOLID,
             padx=10,
             pady=5
         )
 
+        self.__set_standard_background()
+        self.__set_text_color()
+
+        colors.button_background.trace(
+            "w",
+            lambda *args: self.__set_standard_background()
+        )
+
+        colors.button_text.trace("w", lambda *args: self.__set_text_color())
+
         event_handlers = [
-            (event_names.MOUSEOVER, self.__mouseover_callback),
-            (event_names.MOUSEOUT, self.__mouseout_callback)
+            (
+                event_names.MOUSEOVER,
+                lambda *args: self.__set_mousover_background()
+            ),
+            (
+                event_names.MOUSEOUT,
+                lambda *args: self.__set_standard_background()
+            )
         ]
 
         for _args in event_handlers:

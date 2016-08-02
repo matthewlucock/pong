@@ -1,5 +1,6 @@
 import tkinter
-from rong import images, fonts, event_names, utilities
+import functools
+from rong import images, colors, fonts, event_names, game_variables, utilities
 
 
 class StyledCheckbox(tkinter.Frame):
@@ -7,18 +8,25 @@ class StyledCheckbox(tkinter.Frame):
     __CHECKMARK_CONTAINER_BORDER_WIDTH = 5
     __SPACE_BETWEEN_CHECKMARK_AND_LABEL = 20
 
-    def __set_checkmark_state(self, *args):
+    __get_checkmark_image = functools.partial(
+        utilities.get_value_corresponding_to_contrast_level,
+        regular_value=images.TKINTER_USABLE_INVERTED_CHECKMARK,
+        high_contrast_value=images.TKINTER_USABLE_CHECKMARK
+    )
+
+    def __set_checkmark_state(self):
         if self._variable.get():
-            self._checkmark.pack()
+            self._checkmark.config(image=self.__get_checkmark_image())
         else:
             self._checkmark.pack_forget()
+
+    def __set_text_color(self):
+        self._text.config(foreground=colors.checkbox_text.get())
 
     def __init__(self, master, variable, text):
         super().__init__(master)
 
         self._variable = variable
-
-        variable.trace("w", self.__set_checkmark_state)
 
         self._checkmark_container = tkinter.Frame(
             self,
@@ -40,8 +48,18 @@ class StyledCheckbox(tkinter.Frame):
 
         self.__set_checkmark_state()
 
-        label = tkinter.Label(self, text=text, font=fonts.checkbox_font)
-        label.pack()
+        variable.trace("w", lambda *args: self.__set_checkmark_state())
+        game_variables.high_contrast_mode_enabled.trace(
+            "w",
+            lambda *args: self.__set_checkmark_state()
+        )
+
+        self._text = tkinter.Label(self, text=text, font=fonts.checkbox_font)
+        self._text.pack()
+
+        self.__set_text_color()
+
+        colors.checkbox_text.trace("w", lambda *args: self.__set_text_color())
 
         click_handler_arguments = (
             event_names.LEFT_CLICK,
@@ -52,7 +70,7 @@ class StyledCheckbox(tkinter.Frame):
             self,
             self._checkmark,
             self._checkmark_container,
-            label
+            self._text
         ]
 
         for _widget in widgets_to_bind_click_handler_to:

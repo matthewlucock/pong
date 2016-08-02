@@ -1,5 +1,6 @@
 import tkinter
 import functools
+from rong import game_variables
 from .vector import Vector
 from .physics import get_line_collision
 from .physics import in_direction
@@ -44,7 +45,7 @@ def get_value_corresponding_to_contrast_level(
     if game_variables.high_contrast_mode_enabled.get():
         return high_contrast_value
 
-    return regular_color
+    return regular_value
 
 
 def set_tkinter_variable_corresponding_to_tkinter_boolean_variable(

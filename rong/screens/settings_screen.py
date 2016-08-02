@@ -1,5 +1,6 @@
 import tkinter
-from rong import custom_widgets, fonts, game_variables, event_names, utilities
+from rong import custom_widgets, colors, fonts, game_variables, event_names, \
+    utilities
 from rong.screen_manager import screen_manager
 
 
@@ -27,3 +28,25 @@ _high_contrast_checkbox.pack(anchor=tkinter.W)
 
 _back_button = custom_widgets.BackButton(master=settings_screen)
 _back_button.pack(pady=(0, 50))
+
+_widgets_to_set_background_of = [
+    settings_screen,
+    _title
+]
+
+
+def _screen_background_color_trace_callback(*args):
+    for _widget in _widgets_to_set_background_of:
+        _widget.config(
+            background=colors.screen_background.get()
+        )
+
+
+def _title_color_trace_callback(*args):
+    _title.config(foreground=colors.title.get())
+
+
+_screen_background_color_trace_callback()
+_title_color_trace_callback()
+colors.screen_background.trace("w", _screen_background_color_trace_callback)
+colors.title.trace("w", _title_color_trace_callback)

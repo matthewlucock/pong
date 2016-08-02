@@ -1,5 +1,5 @@
 import tkinter
-from rong import custom_widgets, fonts, event_names, utilities
+from rong import custom_widgets, colors, fonts, event_names, utilities
 from rong.screen_manager import screen_manager
 
 from .versus_ai_screen import versus_ai_screen
@@ -67,3 +67,28 @@ for _individual_menu_data in _menus_data:
         widgets=_menu_buttons,
         fill_available_width=True
     )
+
+_widgets_to_update_background_of = [
+    main_screen,
+    _title,
+    _menus_container,
+    _modes_menu,
+    _miscellaneous_menu
+]
+
+
+def _screen_background_color_trace_callback(*args):
+    for _widget in _widgets_to_update_background_of:
+        _widget.config(
+            background=colors.screen_background.get()
+        )
+
+
+def _title_color_trace_callback(*args):
+    _title.config(foreground=colors.title.get())
+
+
+_screen_background_color_trace_callback()
+_title_color_trace_callback()
+colors.screen_background.trace("w", _screen_background_color_trace_callback)
+colors.title.trace("w", _title_color_trace_callback)
