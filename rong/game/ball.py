@@ -5,6 +5,7 @@ class Ball:
     __BASE_RADIUS = 20
     __BACKGROUND_COLOR = "green"
     __VELOCITY_MULTIPLIER = 250
+    __A_LITTLE_BIT = 0.1
 
     def __generate_random_starting_velocity(self):
         velocity = utilities.Vector(1, random.random() * 2 - 1)
@@ -58,11 +59,13 @@ class Ball:
 
     def _check_bounce(self, intervals):
         for interval in intervals:
+            #collided_between_frames = (self._collides_path(interval)
+            #    or self._collides_corners(interval[0])
+            #    or self._collides_corners(interval[1])
+            #)
             if (
                     self._collides_now(interval)
-                    #or self._collides_path(interval)
-                    #or self._collides_corners(interval[0])
-                    #or self._collides_corners(interval[1]
+            #        or collided_between_frames
             ):
                 moving_towards = self.position + self.velocity
                 point_of_collision = utilities.get_line_collision(self.position, moving_towards, *interval)
@@ -78,10 +81,6 @@ class Ball:
                         point_of_collision
                     )
                     smaller_line_angle = polar_of_line[1]
-                    #while smaller_line_angle >= math.pi:
-                    #    smaller_line_angle -= math.pi
-                    #while smaller_line_angle < 0:
-                    #    smaller_line_angle += math.pi
                     new_polar = (
                         polar_from_collision[0],
                         math.pi - polar_from_collision[1] + 2 * smaller_line_angle
@@ -94,6 +93,9 @@ class Ball:
                     self.velocity = new_velocity_direction.get_at_magnitude(
                         self.__VELOCITY_MULTIPLIER
                     )
+            #        if collided_between_frames:
+            #            new_displacement_from_collision = new_velocity_direction.get_at_magnitude(self.__A_LITTLE_BIT)
+            #            self.position = point_of_collision + new_displacement_from_collision
 
     def _collides_now(self, interval):
         c = self.position
@@ -109,16 +111,43 @@ class Ball:
             return ((c - p).magnitude <= r)
         else:
             return ((c - n).magnitude <= r)
-'''
+
+    '''
     def _collides_path(self, interval):
-        if _last_position == position!!!!!
-        point_of_collision = get_line_collision(
+        if self._last_position == self.position:
+            return False
+
+        point_of_collision = utilities.get_line_collision(
             self.position,
             self._last_position, 
             *interval
         )
-        return point_is_on_interval(
-            point_of_collision,
-            (self.position, self._last_position)
+        return (
+            utilities.point_is_on_interval(
+                point_of_collision,
+                (self.position, self._last_position)
+            )
+            and utilities.point_is_on_interval(
+                point_of_collision,
+                interval
+            )
         )
-'''
+
+    def _collides_corners(self, corner):
+        if self._last_position == self.position:
+            return False
+
+        c = corner
+        r = self.radius
+        m = self._last_position
+        n = self.position
+        v = n - m
+        t = (v.x * c.x + v.y * c.y - v.x * m.x - v.y * m.y) / (v.x**2 + v.y**2)
+        p = m + (v * t)
+        if t <= 0:
+            return ((c - m).magnitude <= r)
+        elif t < 1:
+            return ((c - p).magnitude <= r)
+        else:
+            return ((c - n).magnitude <= r)
+    '''

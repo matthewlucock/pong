@@ -5,10 +5,6 @@ def get_line_collision(line_1_point_1, line_1_point_2, line_2_point_1, line_2_po
     x2, y2 = line_1_point_2.tuple
     x3, y3 = line_2_point_1.tuple
     x4, y4 = line_2_point_2.tuple
-    #print(x1, y1)
-    #print(x2, y2)
-    #print(x3, y3)
-    #print(x4, y4)
     if x2 - x1 == 0 and x4 - x3 == 0:
         raise Exception
     if y2 - y1 == 0 and y4 - y3 == 0:
@@ -28,13 +24,18 @@ def get_line_collision(line_1_point_1, line_1_point_2, line_2_point_1, line_2_po
     return Vector(x, y)
 
 def in_direction(test_point, start, direction):
-    return ((test_point.x - start.x) / direction.x >= 0)
+    if direction.x != 0:
+        return ((test_point.x - start.x) / direction.x >= 0)
+    elif direction.y != 0:
+        return ((test_point.y - start.y) / direction.y >= 0)
+    else:
+        raise Exception
 
 def point_is_on_line(point, interval):
     x1, y1 = interval[0].tuple
     x2, y2 = interval[1].tuple
     if x2 == x1:
-        return (x == x1)
+        return (point.x == x1)
     m = (y2 - y1) / (x2 - x1)
     y = m * (point.x - x1) + y1
     return (point.y == y)
