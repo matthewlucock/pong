@@ -2,7 +2,6 @@ import tkinter
 from rong import custom_widgets, fonts, event_names, utilities
 from rong.screen_manager import screen_manager
 
-from .campaign_screen import campaign_screen
 from .versus_ai_screen import versus_ai_screen
 from .multiplayer_screen import multiplayer_screen
 from .zen_screen import zen_screen
@@ -31,7 +30,6 @@ _menus_data = [
     {
         "master": _modes_menu,
         "buttons": [
-            {"text": "Campaign", "screen": campaign_screen},
             {"text": "Versus AI", "screen": versus_ai_screen},
             {"text": "Multiplayer", "screen": multiplayer_screen},
             {"text": "Zen", "screen": zen_screen}
