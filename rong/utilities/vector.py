@@ -50,6 +50,24 @@ class Vector:
         return Vector(self.x, self.y)
 
     @property
+    def inverted(self):
+        vector = self.copy()
+        vector *= -1
+        return vector
+
+    @property
+    def inverted_x(self):
+        vector = self.copy()
+        vector.x = vector.x * -1
+        return vector
+
+    @property
+    def inverted_y(self):
+        vector = self.copy()
+        vector.y = vector.y * -1
+        return vector
+
+    @property
     def unit_vector(self):
         vector = self.copy()
         vector.normalise()
