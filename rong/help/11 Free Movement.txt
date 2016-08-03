@@ -1,0 +1,3 @@
+Free movement is rather self-explanatory. When this is enabled, in addition to moving vertically, the players may also move horizontally, and rotate their paddles, using the controls detailed in the controls section of the help.
+
+It is worth noting that, even if you enable free movement in Versus AI mode, the AI player will still only move vertically.

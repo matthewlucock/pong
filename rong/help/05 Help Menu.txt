@@ -1,0 +1,1 @@
+The help menu allows you to view the game help files within the game. This should be able to answer any questions you have about the game.

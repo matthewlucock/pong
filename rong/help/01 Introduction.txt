@@ -1,0 +1,3 @@
+Hello, welcome to Rong. Rong is a basic arcade style game, in which the aim is to hit the ball past your opponent’s paddle, and not let it pass your paddle. Rong contains a few different game modes, Versus AI, Multiplayer and Zen Mode, each with slightly different aims and rules.
+
+The rest of the help contains more specific information, about particular facets of the game.
