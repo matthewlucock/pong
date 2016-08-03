@@ -1,5 +1,5 @@
 import tkinter
-from rong import fonts, event_names, colors, images
+from rong import fonts, event_names, colors, images, game_variables
 
 
 class IntegerSelector(tkinter.Frame):
@@ -31,6 +31,24 @@ class IntegerSelector(tkinter.Frame):
         for _widget in widgets_to_set_text_color_of:
             _widget.config(foreground=text_color)
 
+    def __set_button_images(self):
+        decrement_button_image = None
+        increment_button_image = None
+
+        if game_variables.high_contrast_mode_enabled.get():
+            decrement_button_image = (
+                images.TKINTER_USABLE_LEFT_POINTING_BLACK_ARROW
+            )
+            increment_button_image = (
+                images.TKINTER_USABLE_RIGHT_POINTING_BLACK_ARROW
+            )
+        else:
+            decrement_button_image = images.TKINTER_USABLE_LEFT_POINTING_ARROW
+            increment_button_image = images.TKINTER_USABLE_RIGHT_POINTING_ARROW
+
+        self._decrement_button.config(image=decrement_button_image)
+        self._increment_button.config(image=increment_button_image)
+
     def __init__(self, master, variable, minimum_value, maximum_value, text):
         if not (minimum_value <= variable.get() <= maximum_value):
             raise Exception
@@ -54,14 +72,13 @@ class IntegerSelector(tkinter.Frame):
             font=fonts.button_font
         )
 
-        self._decrement_button = tkinter.Label(
-            self,
-            image=images.TKINTER_USABLE_LEFT_POINTING_ARROW
-        )
+        self._decrement_button = tkinter.Label(master=self)
+        self._increment_button = tkinter.Label(master=self)
 
-        self._increment_button = tkinter.Label(
-            self,
-            image=images.TKINTER_USABLE_RIGHT_POINTING_ARROW
+        self.__set_button_images()
+        game_variables.high_contrast_mode_enabled.trace(
+            "w",
+            lambda *args: self.__set_button_images()
         )
 
         self._heading.pack(pady=(0, 10))
@@ -86,6 +103,8 @@ class IntegerSelector(tkinter.Frame):
             "w",
             lambda *args: self.__set_value_background_color()
         )
+
+        colors.button_text.trace("w", lambda *args: self.__set_text_color())
 
         self._decrement_button.bind(
             event_names.LEFT_CLICK,

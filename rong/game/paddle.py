@@ -1,5 +1,5 @@
 import copy
-from rong import directions, game_variables, utilities
+from rong import directions, game_variables, utilities, colors
 
 class Paddle:
     SIZE = utilities.Vector(30, 150)
@@ -7,7 +7,6 @@ class Paddle:
     __BASE_VELOCITY = utilities.Vector(500, 500)
     __ROTATION_RATE = 10
     __BOUNDARY_PADDING = 50
-    __BACKGROUND_COLOR = "#aaa"
 
     __LEFT_HALF_KEYS = {
         "up": "w",
@@ -82,6 +81,9 @@ class Paddle:
             + self._bottom_left_vertex.tuple
         )
 
+    def __paddle_color_trace_callback(self, *args):
+        self._canvas.itemconfig(self._canvas_id, fill=colors.paddle.get())
+
     def __init__(self, canvas, in_right_half=False):
         self._canvas = canvas
         self._in_right_half = in_right_half
@@ -147,7 +149,12 @@ class Paddle:
 
         self._canvas_id = canvas.create_polygon(
             *self.__get_polygon_coordinates(),
-            fill=self.__BACKGROUND_COLOR
+        )
+
+        self.__paddle_color_trace_callback()
+        self._paddle_color_trace_observer_name = colors.paddle.trace(
+            "w",
+            self.__paddle_color_trace_callback
         )
 
         self.velocity = copy.deepcopy(self.__BASE_VELOCITY)
@@ -185,3 +192,4 @@ class Paddle:
 
     def delete(self):
         self._canvas.delete(self._canvas_id)
+        colors.paddle.trace_vdelete("w", self._paddle_color_trace_observer_name)

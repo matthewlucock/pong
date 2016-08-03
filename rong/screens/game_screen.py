@@ -7,62 +7,28 @@ from rong.game import Game
 from .settings_screen import settings_screen
 
 
-_SCREEN_BACKGROUND_COLOR = "#aaa"
-_PAUSE_BUTTON_COLOR = "#ccc"
-_CANVAS_BACKGROUND_COLOR = "white"
-_DIVIDER_COLOR = "black"
 _GUTTER_HEIGHT = 50
 _BORDER_WIDTH = 10
 
 current_game = None
 
-def _make_divider():
-    return tkinter.Frame(
-        master=game_screen,
-        background=_DIVIDER_COLOR,
-        height=_BORDER_WIDTH
-    )
+game_screen = tkinter.Frame()
 
-game_screen = tkinter.Frame(background=_SCREEN_BACKGROUND_COLOR)
-
-_space_above_canvas = tkinter.Frame(
-    master=game_screen,
-    background=_SCREEN_BACKGROUND_COLOR
-)
+_space_above_canvas = tkinter.Frame(master=game_screen)
 _space_above_canvas.pack(fill=tkinter.X)
 
-_pause_button_container = tkinter.Frame(
-    master=_space_above_canvas,
-    background=_PAUSE_BUTTON_COLOR
-)
+_pause_button_container = tkinter.Frame(master=_space_above_canvas)
 _pause_button_container.pack(side=tkinter.RIGHT)
-
-_pause_button_container_divider = tkinter.Frame(
-    master=_pause_button_container,
-    background=_DIVIDER_COLOR,
-    width=_BORDER_WIDTH,
-    height=_GUTTER_HEIGHT
-)
-_pause_button_container_divider.pack(side=tkinter.LEFT)
 
 _pause_glyph = tkinter.Label(
     master=_pause_button_container,
     image=images.TKINTER_USEABLE_PAUSE_GLYPH,
-    background=_PAUSE_BUTTON_COLOR,
     borderwidth=0
 )
 _pause_glyph.pack(pady=10, padx=10)
 
-_make_divider().pack(fill=tkinter.BOTH)
-
-canvas = tkinter.Canvas(
-    master=game_screen,
-    background=_CANVAS_BACKGROUND_COLOR,
-    highlightthickness=0
-)
-canvas.pack(fill=tkinter.BOTH, expand=True)
-
-_make_divider().pack(pady=(0, _GUTTER_HEIGHT), fill=tkinter.BOTH)
+canvas = tkinter.Canvas(master=game_screen, highlightthickness=0)
+canvas.pack(fill=tkinter.BOTH, expand=True, pady=(0, _GUTTER_HEIGHT))
 
 
 def _pause_button_callback(*args):
@@ -72,17 +38,12 @@ def _pause_button_callback(*args):
 for _widget in [_pause_button_container, _pause_glyph]:
     _widget.bind(event_names.LEFT_CLICK, _pause_button_callback)
 
-_PAUSE_SCREEN_BACKGROUND_COLOR = "#333"
-
 _pause_menu_container = tkinter.Frame(
     master=game_screen,
     **miscellaneous_widget_parameters.SETTINGS_CONTAINER
 )
 
-_pause_menu_buttons = tkinter.Frame(
-    master=_pause_menu_container,
-    background=_PAUSE_SCREEN_BACKGROUND_COLOR
-)
+_pause_menu_buttons = tkinter.Frame(master=_pause_menu_container)
 _pause_menu_buttons.pack()
 
 _continue_button = custom_widgets.StyledButton(
@@ -107,24 +68,19 @@ utilities.pack_widgets_as_vertical_list(
     fill_available_width=True
 )
 
-_quit_confirmation_container = tkinter.Frame(
-    master=_pause_menu_container,
-    background=_PAUSE_SCREEN_BACKGROUND_COLOR
-)
+_quit_confirmation_container = tkinter.Frame(master=_pause_menu_container)
 
 _quit_confirmation_text = tkinter.Label(
     master=_quit_confirmation_container,
     text="Are you sure you want to quit?",
     font="Arial 50",
+    foreground="white",
     **custom_widgets.miscellaneous_widget_parameters.SETTINGS_CONTAINER
 )
 _quit_confirmation_text.pack(expand=True)
 
-_quit_confirmation_buttons = tkinter.Frame(
-    master=_quit_confirmation_container,
-    background=_PAUSE_SCREEN_BACKGROUND_COLOR
-)
-_quit_confirmation_buttons.pack(pady=(100, 0))
+_quit_confirmation_buttons = tkinter.Frame(master=_quit_confirmation_container)
+_quit_confirmation_buttons.pack()
 
 _quit_cancel_button = custom_widgets.StyledButton(
     master=_quit_confirmation_buttons,
@@ -138,16 +94,48 @@ _quit_confirm_button = custom_widgets.StyledButton(
 _quit_cancel_button.pack(side=tkinter.LEFT, padx=(0, 100))
 _quit_confirm_button.pack()
 
+_widgets_to_have_screen_background = [
+    game_screen,
+    _pause_menu_container,
+    _pause_menu_buttons,
+    _quit_confirmation_container,
+    _quit_confirmation_text,
+    _quit_confirmation_buttons,
+    _space_above_canvas
+]
+
+_widgets_to_have_button_background = [
+    _pause_button_container,
+    _pause_glyph
+]
 
 def _screen_background_color_trace_callback(*args):
-    for _widget in [_pause_menu_container, _pause_menu_buttons]:
+    for _widget in _widgets_to_have_screen_background:
         _widget.config(background=colors.screen_background.get())
 
 
+def _pause_button_background_color_trace_callback(*args):
+    for _widget in _widgets_to_have_button_background:
+        _widget.config(background=colors.pause_button_background.get())
+
+def _set_pause_glpyh():
+    pause_glpyh = utilities.get_value_corresponding_to_contrast_level(
+        regular_value=images.TKINTER_USEABLE_PAUSE_GLYPH,
+        high_contrast_value=images.TKINTER_USEABLE_BLACK_PAUSE_GLYPH
+    )
+    _pause_glyph.config(image=pause_glpyh)
+
 _screen_background_color_trace_callback()
-colors.screen_background.trace(
+_pause_button_background_color_trace_callback()
+_set_pause_glpyh()
+colors.screen_background.trace("w", _screen_background_color_trace_callback)
+colors.pause_button_background.trace(
     "w",
-    _screen_background_color_trace_callback
+    _pause_button_background_color_trace_callback
+)
+game_variables.high_contrast_mode_enabled.trace(
+    "w",
+    lambda *args: _set_pause_glpyh()
 )
 
 

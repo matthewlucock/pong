@@ -18,6 +18,10 @@ button_text = tkinter.StringVar()
 checkbox_text = tkinter.StringVar()
 checkmark_container_background = tkinter.StringVar()
 
+pause_button_background = tkinter.StringVar()
+ball = tkinter.StringVar()
+paddle = tkinter.StringVar()
+
 _link_tkinter_variable_to_high_contrast_mode_enabled(
     variable_to_modify=screen_background,
     true_value="black",
@@ -70,4 +74,22 @@ _link_tkinter_variable_to_high_contrast_mode_enabled(
     variable_to_modify=checkmark_container_background,
     true_value="gray",
     false_value="#2ecc71"
+)
+
+_link_tkinter_variable_to_high_contrast_mode_enabled(
+    variable_to_modify=pause_button_background,
+    true_value="gray",
+    false_value="#2980b9"
+)
+
+_link_tkinter_variable_to_high_contrast_mode_enabled(
+    variable_to_modify=ball,
+    true_value="black",
+    false_value="#d35400"
+)
+
+_link_tkinter_variable_to_high_contrast_mode_enabled(
+    variable_to_modify=paddle,
+    true_value="black",
+    false_value="#96281b"
 )

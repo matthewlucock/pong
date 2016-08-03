@@ -1,9 +1,8 @@
 import random, math
-from rong import utilities, game_variables
+from rong import utilities, colors, game_variables
 
 class Ball:
     __BASE_RADIUS = 20
-    __BACKGROUND_COLOR = "green"
     __VELOCITY_MULTIPLIER = 600 #250
     #__A_LITTLE_BIT = 0.1
 
@@ -16,6 +15,9 @@ class Ball:
 
         velocity *= self.__VELOCITY_MULTIPLIER
         return velocity
+
+    def __ball_color_trace_callback(self, *args):
+        self._canvas.itemconfig(self._canvas_id, fill=colors.ball.get())
 
     def __init__(self, canvas):
         self._canvas = canvas
@@ -35,8 +37,13 @@ class Ball:
                 centre=self.position,
                 radius=self.radius
             ),
-            fill=self.__BACKGROUND_COLOR,
             width=0
+        )
+
+        self.__ball_color_trace_callback()
+        self._ball_color_trace_observer_name = colors.ball.trace(
+            "w",
+            self.__ball_color_trace_callback
         )
 
     def update_position(self, delta_time, intervals):
@@ -56,6 +63,7 @@ class Ball:
 
     def delete(self):
         self._canvas.delete(self._canvas_id)
+        colors.ball.trace_vdelete("w", self._ball_color_trace_observer_name)
 
     def collides_with_power_up(self, power_up):
         return (
@@ -90,7 +98,7 @@ class Ball:
                         polar_from_collision[0],
                         math.pi - polar_from_collision[1] + 2 * smaller_line_angle
                     )
-                    
+
                     index = intervals.index(interval)
                     if (
                             (index == 3 or index == 9)
@@ -100,7 +108,7 @@ class Ball:
                             new_polar[0],
                             self._special_bounce(interval, point_of_collision, True if index == 9 else False)
                         )
-                    
+
                     location_of_direction_from_collision = utilities.Vector.point_at_polar_from_reference(
                         new_polar,
                         point_of_collision
@@ -157,7 +165,7 @@ class Ball:
 
         point_of_collision = utilities.get_line_collision(
             self.position,
-            self._last_position, 
+            self._last_position,
             *interval
         )
         return (

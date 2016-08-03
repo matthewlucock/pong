@@ -17,6 +17,12 @@ class StyledCheckbox(tkinter.Frame):
     def __set_text_color(self):
         self._text.config(foreground=colors.checkbox_text.get())
 
+    def __set_checkmark(self):
+        if game_variables.high_contrast_mode_enabled.get():
+            self._checkmark.config(image=images.TKINTER_USABLE_BLACK_CHECKMARK)
+        else:
+            self._checkmark.config(image=images.TKINTER_USABLE_CHECKMARK)
+
     def __init__(self, master, variable, text):
         super().__init__(master)
 
@@ -35,17 +41,17 @@ class StyledCheckbox(tkinter.Frame):
         )
 
         self._checkmark = tkinter.Label(
-            self._checkmark_container,
-            image=images.TKINTER_USABLE_CHECKMARK,
+            master=self._checkmark_container,
             borderwidth=0
         )
 
         self.__set_checkmark_state()
+        self.__set_checkmark()
 
         variable.trace("w", lambda *args: self.__set_checkmark_state())
         game_variables.high_contrast_mode_enabled.trace(
             "w",
-            lambda *args: self.__set_checkmark_state()
+            lambda *args: self.__set_checkmark()
         )
 
         self._text = tkinter.Label(self, text=text, font=fonts.checkbox_font)
