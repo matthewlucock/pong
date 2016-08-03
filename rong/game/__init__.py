@@ -5,6 +5,7 @@ from .clock import Clock
 from .paddle import Paddle
 from .zen_wall import ZenWall
 from .ball import Ball
+from .ai import AI
 
 
 class Game:
@@ -25,8 +26,11 @@ class Game:
             self._player_two_paddle = Paddle(canvas=canvas, in_right_half=True)
 
             if game_variables.game_mode.get() != game_modes.MULTIPLAYER:
-                #self._ai = AI(ball=ball, paddle=self._player_two_paddle)
-                pass
+                self._ai = AI(
+                    ball=self._ball,
+                    paddle=self._player_two_paddle,
+                    difficulty = game_variables.versus_ai_difficulty.get()
+                )
 
         self._top_interval = (
             utilities.Vector(0, 0),
@@ -74,11 +78,13 @@ class Game:
             pressed_keys=self._keyboard_handler.pressed_keys
         )
 
-        if game_variables.game_mode.get() != game_modes.ZEN:
+        if game_variables.game_mode.get() == game_modes.MULTIPLAYER:
             self._player_two_paddle.update_position(
                 delta_time=delta_time,
                 pressed_keys=self._keyboard_handler.pressed_keys
             )
+        elif game_variables.game_mode.get() == game_modes.VERSUS_AI:
+            self._ai.move(delta_time)
 
         intervals = [self._top_interval, self._bottom_interval] + list(self._player_one_paddle._intervals)
         if game_variables.game_mode.get() == game_modes.ZEN:
