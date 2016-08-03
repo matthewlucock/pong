@@ -30,13 +30,6 @@ right = Direction(
     right_half_key="l"
 )
 
-_directions = [
-    up,
-    down,
-    left,
-    right
-]
-
 Rotation = collections.namedtuple(
     typename = "Rotation",
     field_names = ["rotation", "left_half_key", "right_half_key"]
@@ -57,6 +50,13 @@ anti_clock_wise = Rotation(
 _rotations = [
     clock_wise,
     anti_clock_wise
+]
+
+_directions = [
+    up,
+    down,
+    left,
+    right
 ]
 
 def get_direction_from_keys(keys, in_right_half):

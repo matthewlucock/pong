@@ -3,8 +3,9 @@ from rong import directions, game_variables, utilities
 
 class Paddle:
     SIZE = utilities.Vector(30, 150)
+    __DIAGONAL = SIZE / 2
     __BASE_VELOCITY = utilities.Vector(1000, 1000)
-    __ROTATION_RATE = 0.1
+    __ROTATION_RATE = 10
     __BOUNDARY_PADDING = 50
     __BACKGROUND_COLOR = "#aaa"
 
@@ -22,6 +23,23 @@ class Paddle:
         "right": "l"
     }
 
+    def __new_points(self, new_position):
+        points = [
+            new_position + self.__DIAGONAL.inverted,
+            new_position + self.__DIAGONAL.inverted_y,
+            new_position + self.__DIAGONAL,
+            new_position + self.__DIAGONAL.inverted_x
+        ]
+
+        new_points = []
+        for point in points:
+            polar = point.get_polar_from_reference(new_position)
+            polar = (polar[0], polar[1] + self.rotation)
+            point = utilities.Vector.point_at_polar_from_reference(polar, new_position)
+            new_points.append(point)
+
+        return new_points
+
     @property
     def position(self):
         return self._position
@@ -30,65 +48,39 @@ class Paddle:
     def position(self, new_position):
         new_position = copy.deepcopy(new_position)
 
-        top_right_vertex = new_position + self.SIZE.x_component
-        bottom_left_vertex = new_position + self.SIZE.y_component
-        bottom_right_vertex = new_position + self.SIZE
+        points = self.__new_points(new_position)
 
-        if new_position.y < 0:
-            new_position.y = 0
-            self.position = new_position
-            return
-
-        if bottom_left_vertex.y > self._canvas_size.y:
-            new_position.y -= bottom_left_vertex.y - self._canvas_size.y
-            self.position = new_position
-            return
-
-        if self._in_right_half:
-            if game_variables.free_movement_enabled.get():
-                if top_right_vertex.x > self._right_boundary:
-                    new_position.x -= (
-                        top_right_vertex.x - self._right_boundary
+        for point in points:
+            for boundary in self._boundaries:
+                if not utilities.point_is_on_this_side_of_interval(
+                        self.position,
+                        point,
+                        boundary
+                ):
+                    correction = utilities.displacement_of_collision_of_interval_and_line_to_point_from_reference_from_point(
+                        self.position,
+                        point,
+                        boundary
                     )
-                    self.position = new_position
-                    return
-
-                if new_position.x < self._middle_right_boundary:
-                    new_position.x += (
-                        self._middle_right_boundary - new_position.x
-                    )
-                    self.position = new_position
-                    return
-            elif new_position.x != self._right_boundary:
-                return
-        elif game_variables.free_movement_enabled.get():
-            if new_position.x < self.__BOUNDARY_PADDING:
-                new_position.x = self.__BOUNDARY_PADDING
-                self.position = new_position
-                return
-
-            if new_position.x > self._middle_left_boundary:
-                new_position.x = self._middle_left_boundary
-                self.position = new_position
-                return
-        elif new_position.x != self.__BOUNDARY_PADDING:
-                return
+                    new_position += correction
+                    points = self.__new_points(new_position)
 
         self._position = new_position
-        self._top_right_vertex = top_right_vertex
-        self._bottom_right_vertex = bottom_right_vertex
-        self._bottom_left_vertex = bottom_left_vertex
+        self._top_left_vertex = points[0]
+        self._top_right_vertex = points[1]
+        self._bottom_right_vertex = points[2]
+        self._bottom_left_vertex = points[3]
 
         self._intervals = [
-            (new_position, top_right_vertex),
-            (top_right_vertex, bottom_right_vertex),
-            (bottom_left_vertex, bottom_right_vertex),
-            (new_position, bottom_left_vertex)
+            (self._top_left_vertex, self._top_right_vertex),
+            (self._top_right_vertex, self._bottom_right_vertex),
+            (self._bottom_left_vertex, self._bottom_right_vertex),
+            (self._top_left_vertex, self._bottom_left_vertex)
         ]
 
     def __get_polygon_coordinates(self):
         return (
-            self._position.tuple \
+            self._top_left_vertex.tuple \
             + self._top_right_vertex.tuple \
             + self._bottom_right_vertex.tuple \
             + self._bottom_left_vertex.tuple
@@ -103,28 +95,58 @@ class Paddle:
             canvas.winfo_height()
         )
 
-        halfway_point = self._canvas_size.x / 2
-        self._right_boundary = (
-            self._canvas_size.x \
-            - self.__BOUNDARY_PADDING \
-            - self.SIZE.x
-        )
-        self._middle_left_boundary = (
-            halfway_point - self.__BOUNDARY_PADDING - self.SIZE.x
-        )
-        self._middle_right_boundary = halfway_point + self.__BOUNDARY_PADDING
+        x_offset = self.__BOUNDARY_PADDING + self.SIZE.x / 2
+        if in_right_half:
+            x_offset = (
+                self._canvas_size.x
+                - self.__BOUNDARY_PADDING
+                - self.SIZE.x / 2
+            )
 
-        x_offset = self.__BOUNDARY_PADDING
+        self._boundaries = [
+            (utilities.Vector(), self._canvas_size.x_component),
+            (self._canvas_size.y_component, self._canvas_size)
+        ]
 
         if in_right_half:
-            x_offset = self._right_boundary
-            self._keys = self.__RIGHT_HALF_KEYS
+            middle_boundary_x = self._canvas_size.x / 2 + self.__BOUNDARY_PADDING
+            self._boundaries.append(
+                (self._canvas_size.x_component, self._canvas_size)
+            )
+            self._boundaries.append(
+                (
+                    utilities.Vector(x = middle_boundary_x),
+                    utilities.Vector(
+                        middle_boundary_x,
+                        self._canvas_size.y
+                    )
+                )
+            )
         else:
-            self._keys = self.__LEFT_HALF_KEYS
+            middle_boundary_x = self._canvas_size.x / 2 - self.__BOUNDARY_PADDING
+            self._boundaries.append(
+                (utilities.Vector(), self._canvas_size.y_component)
+            )
+            self._boundaries.append(
+                (
+                    utilities.Vector(x = middle_boundary_x),
+                    utilities.Vector(
+                        middle_boundary_x,
+                        self._canvas_size.y
+                    )
+                )
+            )
+
+        self.rotation = 0
+
+        self._position = utilities.Vector(
+            x_offset,
+            self._canvas_size.y / 2
+        )
 
         self.position = utilities.Vector(
             x_offset,
-            (self._canvas_size.y - self.SIZE.y) / 2
+            self._canvas_size.y / 2
         )
 
         self._canvas_id = canvas.create_polygon(
@@ -134,24 +156,28 @@ class Paddle:
 
         self.velocity = copy.deepcopy(self.__BASE_VELOCITY)
 
-    def rotate(self, rotation):
-        pass
-
     def update_position(self, delta_time, pressed_keys):
         delta_speed = self.velocity.magnitude * delta_time
+        delta_rotation = self.__ROTATION_RATE * delta_time
 
         direction = directions.get_direction_from_keys(
             keys=pressed_keys,
             in_right_half=self._in_right_half
         )
-        velocity = direction * delta_speed
 
-        rotation = directions.get_rotation_from_keys(
+        rotation_increment = directions.get_rotation_from_keys(
             keys = pressed_keys,
             in_right_half = self._in_right_half
         )
 
-        self.rotate(rotation)
+        if not game_variables.free_movement_enabled.get():
+            direction.x = 0
+            direction.normalise()
+            rotation_increment = 0
+
+        velocity = direction * delta_speed
+
+        self.rotation += rotation_increment * delta_rotation
         self.position += velocity
         self.update_position_on_canvas()
 
