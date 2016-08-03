@@ -6,9 +6,13 @@ from .paddle import Paddle
 from .zen_wall import ZenWall
 from .ball import Ball
 from .ai import AI
-
+from .power_up import Power_Up
+import time, random
 
 class Game:
+    __MEAN_POWER_UP_TIME = 10
+    __POWER_UP_TIME_DEVIATION = 2
+
     __PADDLE_MARGIN_FROM_EDGE_OF_SCREEN = 75
     current_game = None
 
@@ -44,6 +48,10 @@ class Game:
             )
         )
 
+        self._power_ups = []
+        self._active_effects = []
+        self._next_power_up_time = self._get_new_power_up_time()
+
         self._keyboard_handler = KeyboardHandler()
         self._clock = Clock()
 
@@ -71,6 +79,10 @@ class Game:
             window.update()
 
     def update(self):
+        if time.time() > self._next_power_up_time:
+            self._power_ups.append(Power_Up(self._canvas))
+            self._next_power_up_time = self._get_new_power_up_time()
+
         delta_time = self._clock.calculate_delta_time()
 
         self._player_one_paddle.update_position(
@@ -102,3 +114,9 @@ class Game:
             self._zen_wall.delete()
         else:
             self._player_two_paddle.delete()
+
+    def _get_new_power_up_time(self):
+        return time.time() + random.gauss(
+            self.__MEAN_POWER_UP_TIME,
+            self.__POWER_UP_TIME_DEVIATION
+        )

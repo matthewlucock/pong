@@ -67,7 +67,7 @@ class Ball:
 
     def collides_with_power_up(self, power_up):
         return (
-            self.radius + power_up.radius <= (self.position - power_up.position).magnitude
+            self.radius + power_up.RADIUS <= (self.position - power_up.position).magnitude
         )
 
     def _check_bounce(self, intervals):
