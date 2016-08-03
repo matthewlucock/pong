@@ -7,8 +7,8 @@ from .physics import in_direction
 from .physics import point_is_on_line
 from .physics import point_is_on_interval
 from .physics import point_is_on_this_side_of_interval
-from .physics import displacement_of_collision_of_interval_and_line_to_point_from_reference_from_point
 from .physics import midpoint
+from .physics import vector_to_line
 
 def pack_widgets_as_vertical_list(
         widgets,

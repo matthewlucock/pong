@@ -70,3 +70,12 @@ def displacement_of_collision_of_interval_and_line_to_point_from_reference_from_
 
 def midpoint(point1, point2):
     return Vector((point2.x + point1.x) / 2, (point2.y + point1.y) / 2)
+
+def vector_to_line(point, interval):
+    c = point
+    m = interval[0]
+    n = interval[1]
+    v = n - m
+    t = (v.x * c.x + v.y * c.y - v.x * m.x - v.y * m.y) / (v.x**2 + v.y**2)
+    p = m + (v * t)
+    return p - c

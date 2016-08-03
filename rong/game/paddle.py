@@ -57,11 +57,7 @@ class Paddle:
                         point,
                         boundary
                 ):
-                    correction = utilities.displacement_of_collision_of_interval_and_line_to_point_from_reference_from_point(
-                        self.position,
-                        point,
-                        boundary
-                    )
+                    correction = utilities.vector_to_line(point, boundary)
                     new_position += correction
                     points = self.__new_points(new_position)
 
