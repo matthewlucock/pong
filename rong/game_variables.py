@@ -12,6 +12,9 @@ versus_ai_difficulty = IntVar()
 power_ups_enabled = BooleanVar()
 free_movement_enabled = BooleanVar()
 
+player_one_score = IntVar()
+player_two_score = IntVar()
+
 #music_enabled.set(True)
 versus_ai_difficulty.set(5)
 power_ups_enabled.set(True)

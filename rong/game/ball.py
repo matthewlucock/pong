@@ -4,7 +4,14 @@ from rong import utilities, colors, game_variables
 class Ball:
     __BASE_RADIUS = 20
     __VELOCITY_MULTIPLIER = 600 #250
-    #__A_LITTLE_BIT = 0.1
+    __OFF_SCREEN_DISTANCE_MULTIPLIER = 5
+
+    def __reset(self):
+        self.position = utilities.Vector(
+            self._canvas.winfo_width() / 2,
+            self._canvas.winfo_height() / 2
+        )
+        self.velocity = self.__generate_random_starting_velocity()
 
     def __generate_random_starting_velocity(self):
         velocity = utilities.Vector(1, random.random() * 2 - 1)
@@ -23,14 +30,8 @@ class Ball:
         self._canvas = canvas
         self.radius = self.__BASE_RADIUS
 
-        self.position = utilities.Vector(
-            canvas.winfo_width() / 2,
-            canvas.winfo_height() / 2
-        )
-
+        self.__reset()
         self._last_position = self.position.copy()
-
-        self.velocity = self.__generate_random_starting_velocity()
 
         self._canvas_id = canvas.create_oval(
             *utilities.get_canvas_circle_coordinates(
@@ -47,6 +48,25 @@ class Ball:
         )
 
     def update_position(self, delta_time, intervals):
+        if (
+                self.position.x
+                < -self.radius * self.__OFF_SCREEN_DISTANCE_MULTIPLIER
+        ):
+            utilities.increment_tkinter_integer_variable(
+                variable=game_variables.player_two_score
+            )
+            self.__reset()
+        elif (
+                self.position.x > (
+                    self._canvas.winfo_width()
+                    + self.radius * self.__OFF_SCREEN_DISTANCE_MULTIPLIER
+                )
+        ):
+            utilities.increment_tkinter_integer_variable(
+                variable=game_variables.player_one_score
+            )
+            self.__reset()
+
         self._check_bounce(intervals)
         movement = self.velocity * delta_time
         self.position += movement

@@ -53,8 +53,8 @@ class Game:
         self._next_power_up_time = self._get_new_power_up_time()
 
         self._keyboard_handler = KeyboardHandler()
-        self._clock = Clock()
 
+        self._clock = Clock()
         Game.current_game = self
         self.resume()
 
@@ -115,8 +115,13 @@ class Game:
         else:
             self._player_two_paddle.delete()
 
+<<<<<<< HEAD
     def _get_new_power_up_time(self):
         return time.time() + random.gauss(
             self.__MEAN_POWER_UP_TIME,
             self.__POWER_UP_TIME_DEVIATION
         )
+=======
+        game_variables.player_one_score.set(0)
+        game_variables.player_two_score.set(0)
+>>>>>>> origin/master

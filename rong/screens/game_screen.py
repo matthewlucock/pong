@@ -1,6 +1,6 @@
 import tkinter
 from rong import custom_widgets, colors, images, game_variables, fonts, \
-    event_names, utilities
+    event_names, fonts, utilities
 from rong.screen_manager import screen_manager
 from rong.custom_widgets import StyledButton, miscellaneous_widget_parameters
 from rong.game import Game
@@ -9,6 +9,7 @@ from .settings_screen import settings_screen
 
 _GUTTER_HEIGHT = 50
 _BORDER_WIDTH = 10
+_SCORE_TEMPLATE = "{player_one_score} — {player_two_score}"
 
 current_game = None
 
@@ -16,6 +17,13 @@ game_screen = tkinter.Frame()
 
 _space_above_canvas = tkinter.Frame(master=game_screen)
 _space_above_canvas.pack(fill=tkinter.X)
+
+_score = tkinter.Label(
+    master=_space_above_canvas,
+    font=fonts.button_font,
+    foreground="white"
+)
+_score.pack(expand=True, side=tkinter.LEFT)
 
 _pause_button_container = tkinter.Frame(master=_space_above_canvas)
 _pause_button_container.pack(side=tkinter.RIGHT)
@@ -101,7 +109,8 @@ _widgets_to_have_screen_background = [
     _quit_confirmation_container,
     _quit_confirmation_text,
     _quit_confirmation_buttons,
-    _space_above_canvas
+    _space_above_canvas,
+    _score
 ]
 
 _widgets_to_have_button_background = [
@@ -138,6 +147,17 @@ game_variables.high_contrast_mode_enabled.trace(
     lambda *args: _set_pause_glpyh()
 )
 
+
+def _set_score():
+    score_text = _SCORE_TEMPLATE.format(
+        player_one_score=game_variables.player_one_score.get(),
+        player_two_score=game_variables.player_two_score.get()
+    )
+    _score.config(text=score_text)
+
+_set_score()
+game_variables.player_one_score.trace("w", lambda *args: _set_score())
+game_variables.player_two_score.trace("w", lambda *args: _set_score())
 
 def _continue_button_callback(*args):
     _pause_menu_container.place_forget()
