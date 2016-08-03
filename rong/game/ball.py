@@ -4,7 +4,7 @@ from rong import utilities, game_variables
 class Ball:
     __BASE_RADIUS = 20
     __BACKGROUND_COLOR = "green"
-    __VELOCITY_MULTIPLIER = 350 #250
+    __VELOCITY_MULTIPLIER = 600 #250
     #__A_LITTLE_BIT = 0.1
 
     def __generate_random_starting_velocity(self):

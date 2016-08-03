@@ -4,7 +4,7 @@ from rong import directions, game_variables, utilities
 class Paddle:
     SIZE = utilities.Vector(30, 150)
     __DIAGONAL = SIZE / 2
-    __BASE_VELOCITY = utilities.Vector(1000, 1000)
+    __BASE_VELOCITY = utilities.Vector(500, 500)
     __ROTATION_RATE = 10
     __BOUNDARY_PADDING = 50
     __BACKGROUND_COLOR = "#aaa"
