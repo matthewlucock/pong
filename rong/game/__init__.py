@@ -45,8 +45,8 @@ class Game:
         )
 
         self._keyboard_handler = KeyboardHandler()
-        self._clock = Clock()
 
+        self._clock = Clock()
         Game.current_game = self
         self.resume()
 
@@ -102,3 +102,6 @@ class Game:
             self._zen_wall.delete()
         else:
             self._player_two_paddle.delete()
+
+        game_variables.player_one_score.set(0)
+        game_variables.player_two_score.set(0)

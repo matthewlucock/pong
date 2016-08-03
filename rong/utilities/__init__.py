@@ -41,6 +41,10 @@ def toggle_tkinter_boolean_variable(variable):
         variable.set(True)
 
 
+def increment_tkinter_integer_variable(variable):
+    variable.set(variable.get() + 1)
+
+
 def get_value_corresponding_to_contrast_level(
         regular_value,
         high_contrast_value
