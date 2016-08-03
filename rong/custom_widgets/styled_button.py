@@ -17,10 +17,9 @@ class StyledButton(tkinter.Label):
             master=master,
             text=text,
             font=fonts.button_font,
-            borderwidth=10,
-            relief=tkinter.SOLID,
-            padx=10,
-            pady=5
+            borderwidth=0,
+            padx=20,
+            pady=10
         )
 
         self.__set_standard_background()

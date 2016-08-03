@@ -1,9 +1,5 @@
-import tkinter
-
-
 SETTINGS_CONTAINER = {
-    "borderwidth": 10,
-    "relief": tkinter.SOLID,
+    "borderwidth": 0,
     "padx": 50,
     "pady": 25
 }

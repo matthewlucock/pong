@@ -40,8 +40,10 @@ _free_movement_checkbox = custom_widgets.StyledCheckbox(
     text="Free movement"
 )
 
+_checkboxes = [_power_ups_checkbox, _free_movement_checkbox]
+
 utilities.pack_widgets_as_vertical_list(
-    widgets=[_power_ups_checkbox, _free_movement_checkbox],
+    widgets=_checkboxes,
     anchor=tkinter.W,
     margin=10
 )
@@ -65,12 +67,33 @@ _widgets_to_set_background_of = [
 ]
 
 
+_widgets_to_have_screen_background = [
+    versus_ai_screen,
+    _title,
+    _buttons_container
+]
+
+_widgets_to_have_settings_container_background = [
+    _settings_container
+]
+
 def _screen_background_color_trace_callback(*args):
-    for _widget in _widgets_to_set_background_of:
+    for _widget in _widgets_to_have_screen_background:
         _widget.config(
             background=colors.screen_background.get()
         )
 
+
+def _settings_container_background_color_trace_callback(*args):
+    background = colors.settings_container_background.get()
+
+    for _widget in _widgets_to_have_settings_container_background:
+        _widget.config(background=background)
+
+    for _checkbox in _checkboxes:
+        _checkbox.set_background(background)
+
+    _difficulty_selector.set_background(background)
 
 def _title_color_trace_callback(*args):
     _title.config(foreground=colors.title.get())
@@ -78,5 +101,10 @@ def _title_color_trace_callback(*args):
 
 _screen_background_color_trace_callback()
 _title_color_trace_callback()
+_settings_container_background_color_trace_callback()
 colors.screen_background.trace("w", _screen_background_color_trace_callback)
 colors.title.trace("w", _title_color_trace_callback)
+colors.settings_container_background.trace(
+    "w",
+    _settings_container_background_color_trace_callback
+)

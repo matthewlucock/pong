@@ -1,6 +1,6 @@
 import tkinter
-from rong import custom_widgets, images, game_variables, event_names, fonts, \
-    utilities
+from rong import custom_widgets, colors, images, game_variables, fonts, \
+    event_names, utilities
 from rong.screen_manager import screen_manager
 from rong.custom_widgets import StyledButton, miscellaneous_widget_parameters
 from rong.game import Game
@@ -76,7 +76,6 @@ _PAUSE_SCREEN_BACKGROUND_COLOR = "#333"
 
 _pause_menu_container = tkinter.Frame(
     master=game_screen,
-    background=_PAUSE_SCREEN_BACKGROUND_COLOR,
     **miscellaneous_widget_parameters.SETTINGS_CONTAINER
 )
 
@@ -138,6 +137,18 @@ _quit_confirm_button = custom_widgets.StyledButton(
 
 _quit_cancel_button.pack(side=tkinter.LEFT, padx=(0, 100))
 _quit_confirm_button.pack()
+
+
+def _screen_background_color_trace_callback(*args):
+    for _widget in [_pause_menu_container, _pause_menu_buttons]:
+        _widget.config(background=colors.screen_background.get())
+
+
+_screen_background_color_trace_callback()
+colors.screen_background.trace(
+    "w",
+    _screen_background_color_trace_callback
+)
 
 
 def _continue_button_callback(*args):

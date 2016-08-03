@@ -8,15 +8,9 @@ class StyledCheckbox(tkinter.Frame):
     __CHECKMARK_CONTAINER_BORDER_WIDTH = 5
     __SPACE_BETWEEN_CHECKMARK_AND_LABEL = 20
 
-    __get_checkmark_image = functools.partial(
-        utilities.get_value_corresponding_to_contrast_level,
-        regular_value=images.TKINTER_USABLE_INVERTED_CHECKMARK,
-        high_contrast_value=images.TKINTER_USABLE_CHECKMARK
-    )
-
     def __set_checkmark_state(self):
         if self._variable.get():
-            self._checkmark.config(image=self.__get_checkmark_image())
+            self._checkmark.pack()
         else:
             self._checkmark.pack_forget()
 
@@ -30,10 +24,10 @@ class StyledCheckbox(tkinter.Frame):
 
         self._checkmark_container = tkinter.Frame(
             self,
+            padx=5,
+            pady=5,
             height=self.__CHECKBOX_SIZE,
-            width=self.__CHECKBOX_SIZE,
-            borderwidth=5,
-            relief=tkinter.SOLID,
+            width=self.__CHECKBOX_SIZE
         )
         self._checkmark_container.pack(
             side=tkinter.LEFT,
@@ -58,8 +52,13 @@ class StyledCheckbox(tkinter.Frame):
         self._text.pack()
 
         self.__set_text_color()
+        self.set_checkmark_container_background()
 
         colors.checkbox_text.trace("w", lambda *args: self.__set_text_color())
+        colors.checkmark_container_background.trace(
+            "w",
+            lambda *args: self.set_checkmark_container_background()
+        )
 
         click_handler_arguments = (
             event_names.LEFT_CLICK,
@@ -75,3 +74,13 @@ class StyledCheckbox(tkinter.Frame):
 
         for _widget in widgets_to_bind_click_handler_to:
             _widget.bind(*click_handler_arguments)
+
+    def set_background(self, color):
+        self.config(background=color)
+        self._text.config(background=color)
+
+    def set_checkmark_container_background(self):
+        for _widget in [self._checkmark, self._checkmark_container]:
+            _widget.config(
+                background=colors.checkmark_container_background.get()
+            )

@@ -1,9 +1,8 @@
 import tkinter
-from rong import fonts, event_names, images
+from rong import fonts, event_names, colors, images
 
 
 class IntegerSelector(tkinter.Frame):
-    __VALUE_LABEL_BORDER_WIDTH = 5
     __SPACE_BETWEEN_MODIFIER_BUTTONS_AND_VALUE_LABEL = 40
 
     def __set_variable(self, new_value):
@@ -19,6 +18,19 @@ class IntegerSelector(tkinter.Frame):
     def __increment_button_callback(self, *args):
         self.__set_variable(self._variable.get() + 1)
 
+    def __set_value_background_color(self):
+        self._value_label.config(
+            background=colors.checkmark_container_background.get()
+        )
+
+    def __set_text_color(self):
+        text_color = colors.button_text.get()
+
+        widgets_to_set_text_color_of = [self._heading, self._value_label]
+
+        for _widget in widgets_to_set_text_color_of:
+            _widget.config(foreground=text_color)
+
     def __init__(self, master, variable, minimum_value, maximum_value, text):
         if not (minimum_value <= variable.get() <= maximum_value):
             raise Exception
@@ -31,32 +43,30 @@ class IntegerSelector(tkinter.Frame):
 
         variable.trace("w", self.__variable_trace_callback)
 
-        heading = tkinter.Label(self, text=text, font=fonts.button_font)
+        self._heading = tkinter.Label(self, text=text, font=fonts.button_font)
 
         self._value_label = tkinter.Label(
             self,
             text=self._variable.get(),
-            borderwidth=self.__VALUE_LABEL_BORDER_WIDTH,
-            relief=tkinter.SOLID,
             width=3,
             padx=10,
             pady=5,
             font=fonts.button_font
         )
 
-        decrement_button = tkinter.Label(
+        self._decrement_button = tkinter.Label(
             self,
             image=images.TKINTER_USABLE_LEFT_POINTING_ARROW
         )
 
-        increment_button = tkinter.Label(
+        self._increment_button = tkinter.Label(
             self,
             image=images.TKINTER_USABLE_RIGHT_POINTING_ARROW
         )
 
-        heading.pack(pady=(0, 10))
+        self._heading.pack(pady=(0, 10))
 
-        decrement_button.pack(
+        self._decrement_button.pack(
             expand=True,
             side=tkinter.LEFT,
             padx=(0, self.__SPACE_BETWEEN_MODIFIER_BUTTONS_AND_VALUE_LABEL)
@@ -64,17 +74,36 @@ class IntegerSelector(tkinter.Frame):
 
         self._value_label.pack(side=tkinter.LEFT)
 
-        increment_button.pack(
+        self._increment_button.pack(
             expand=True,
             padx=(self.__SPACE_BETWEEN_MODIFIER_BUTTONS_AND_VALUE_LABEL, 0)
         )
 
-        decrement_button.bind(
+        self.__set_value_background_color()
+        self.__set_text_color()
+
+        colors.checkmark_container_background.trace(
+            "w",
+            lambda *args: self.__set_value_background_color()
+        )
+
+        self._decrement_button.bind(
             event_names.LEFT_CLICK,
             self.__decrement_button_callback
         )
 
-        increment_button.bind(
+        self._increment_button.bind(
             event_names.LEFT_CLICK,
             self.__increment_button_callback
         )
+
+    def set_background(self, color):
+        _widgets_to_set_background_of = [
+            self,
+            self._heading,
+            self._decrement_button,
+            self._increment_button
+        ]
+
+        for _widget in _widgets_to_set_background_of:
+            _widget.config(background=color)
