@@ -14,6 +14,7 @@ class Game:
     __POWER_UP_TIME_DEVIATION = 2
 
     __PADDLE_MARGIN_FROM_EDGE_OF_SCREEN = 75
+    SCORE_LIMIT = 10
     current_game = None
 
     def __init__(self, canvas):
@@ -107,6 +108,9 @@ class Game:
         self._ball.update_position(delta_time, intervals)
 
     def destroy(self):
+        if not game_variables.game_is_paused.get():
+            self.pause()
+
         self._player_one_paddle.delete()
         self._ball.delete()
 
@@ -115,13 +119,12 @@ class Game:
         else:
             self._player_two_paddle.delete()
 
-<<<<<<< HEAD
+        game_variables.player_one_score.set(0)
+        game_variables.player_two_score.set(0)
+        game_variables.game_is_paused.set(False)
+
     def _get_new_power_up_time(self):
         return time.time() + random.gauss(
             self.__MEAN_POWER_UP_TIME,
             self.__POWER_UP_TIME_DEVIATION
         )
-=======
-        game_variables.player_one_score.set(0)
-        game_variables.player_two_score.set(0)
->>>>>>> origin/master
