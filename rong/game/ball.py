@@ -12,6 +12,7 @@ class Ball:
             self._canvas.winfo_height() / 2
         )
         self.velocity = self.__generate_random_starting_velocity()
+        self.last_hit_by = 0
 
     def __generate_random_starting_velocity(self):
         velocity = utilities.Vector(1, random.random() * 2 - 1)
@@ -140,6 +141,10 @@ class Ball:
             #        if collided_between_frames:
             #            new_displacement_from_collision = new_velocity_direction.get_at_magnitude(self.__A_LITTLE_BIT)
             #            self.position = point_of_collision + new_displacement_from_collision
+                    if 2 <= index <= 5:
+                        self.last_hit_by = 1
+                    elif 6 <= index <= 9:
+                        self.last_hit_by = 2
 
     def _collides_now(self, interval):
         c = self.position

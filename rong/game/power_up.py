@@ -3,6 +3,7 @@ from rong import utilities
 
 class Power_Up:
     RADIUS = 15
+    DURATION = 5
     __MIN_FRACTIONAL_X = 0.1
     __MAX_FRACTIONAL_X = 0.9
     __MIN_FRACTIONAL_Y = 0.1
@@ -20,14 +21,12 @@ class Power_Up:
     ]
 
     def __init__(self, canvas):
+        min_x = canvas.winfo_width() * self.__MIN_FRACTIONAL_X
+        max_x = canvas.winfo_width() * self.__MAX_FRACTIONAL_X
+        min_y = canvas.winfo_height() * self.__MIN_FRACTIONAL_Y
+        max_y = canvas.winfo_height() * self.__MAX_FRACTIONAL_Y
         self.position = utilities.Vector(
-            random.randrange(
-                canvas.winfo_width() * self.__MIN_FRACTIONAL_X,
-                canvas.winfo_width() * self.__MAX_FRACTIONAL_X
-            ),
-            random.randrange(
-                canvas.winfo_height() * self.__MIN_FRACTIONAL_Y,
-                canvas.winfo_height() * self.__MAX_FRACTIONAL_Y
-            )
+            min_x + random.random() * (max_x - min_x),
+            min_y + random.random() * (max_y - min_y)
         )
         self.effect = self._EFFECTS[random.randint(1, len(self._EFFECTS)) - 1]

@@ -80,9 +80,17 @@ class Game:
             window.update()
 
     def update(self):
-        if time.time() > self._next_power_up_time:
-            self._power_ups.append(Power_Up(self._canvas))
-            self._next_power_up_time = self._get_new_power_up_time()
+        if game_variables.power_ups_enabled.get():
+            for effect in self._active_effects:
+                if time.time() >= effect[1]:
+                    self._active_effects.remove(effect)
+            for power_up in self._power_ups:
+                if self._ball.collides_with_power_up(power_up):
+                    self._active_effects.append((power_up.effect, time.time() + power_up.DURATION))
+                    self._power_ups.remove(power_up)
+            if time.time() > self._next_power_up_time:
+                self._power_ups.append(Power_Up(self._canvas))
+                self._next_power_up_time = self._get_new_power_up_time()
 
         delta_time = self._clock.calculate_delta_time()
 
