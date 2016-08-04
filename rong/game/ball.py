@@ -3,7 +3,7 @@ from rong import utilities, colors, game_variables
 
 class Ball:
     __BASE_RADIUS = 20
-    __VELOCITY_MULTIPLIER = 600 #250
+    __VELOCITY_MULTIPLIER = 1000 #250
     __OFF_SCREEN_DISTANCE_MULTIPLIER = 5
     set_score_label = None
 

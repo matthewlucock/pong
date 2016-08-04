@@ -49,10 +49,14 @@ def _pause_button_callback(*args):
 for _widget in [_pause_button_container, _pause_glyph]:
     _widget.bind(event_names.LEFT_CLICK, _pause_button_callback)
 
+Game.open_pause_menu = _pause_button_callback
+
 _pause_menu_container = tkinter.Frame(
     master=game_screen,
     **miscellaneous_widget_parameters.SETTINGS_CONTAINER
 )
+
+Game.close_pause_menu = _pause_menu_container.place_forget
 
 _pause_menu_buttons = tkinter.Frame(master=_pause_menu_container)
 _pause_menu_buttons.pack()

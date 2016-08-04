@@ -18,6 +18,54 @@ class Game:
     current_game = None
     canvas = None
     score_label = None
+    open_pause_menu = None
+    close_pause_menu = None
+
+    def __window_movement_and_focus_loss_listener(self, *args):
+        if self._first_frame_has_been_processed:
+            self.pause()
+            Game.open_pause_menu()
+
+    def __bind_window_movement_and_focus_loss_listeners(self):
+        self._window_movement_listener_id = window.bind(
+            event_names.CONFIGURE,
+            self.__window_movement_and_focus_loss_listener
+        )
+        self._window_focus_loss_listener_id = window.bind(
+            event_names.FOCUS_LOSS,
+            self.__window_movement_and_focus_loss_listener
+        )
+
+    def __unbind_window_movement_and_focus_loss_listeners(self):
+        window.unbind(event_names.CONFIGURE, self._window_movement_listener_id)
+        window.unbind(
+            event_names.FOCUS_LOSS,
+            self._window_focus_loss_listener_id
+        )
+        self._window_movement_listener_id = None
+        self._window_focus_loss_listener_id = None
+
+    def __escape_keypress_listener(self, event):
+        if event.keysym != KeyboardHandler.ESCAPE_SYMBOL:
+            return
+
+        if game_variables.game_is_paused.get():
+            Game.close_pause_menu()
+            self.resume()
+        else:
+            self.pause()
+            Game.open_pause_menu()
+
+    def __bind_escape_keypress_listener(self):
+        self._escape_keypress_listener_id = window.bind(
+            event_names.KEYPRESS,
+            self.__escape_keypress_listener,
+            add=True
+        )
+
+    def __unbind_escape_keypress_listener(self):
+        window.unbind(event_names.KEYPRESS, self._escape_keypress_listener_id)
+        self._escape_kepress_listener_id = None
 
     def __init__(self):
         window.update()
@@ -57,7 +105,7 @@ class Game:
         self._next_power_up_time = self._get_new_power_up_time()
 
         game_variables.player_one_score.set(0)
-        game_variables.player_two_score.set(8)
+        game_variables.player_two_score.set(0)
 
         if game_variables.game_mode.get() == game_modes.ZEN:
             Game.score_label.pack_forget()
@@ -65,20 +113,24 @@ class Game:
             Game.score_label.pack()
 
         Ball.set_score_label()
+        self._first_frame_has_been_processed = False
 
         self._keyboard_handler = KeyboardHandler()
+        self.__bind_escape_keypress_listener()
 
         self._clock = Clock()
         Game.current_game = self
         self.resume()
 
+
     def pause(self):
         game_variables.game_is_paused.set(True)
-        self._keyboard_handler.unbind()
+        self.__unbind_window_movement_and_focus_loss_listeners()
 
     def resume(self):
         game_variables.game_is_paused.set(False)
         self._keyboard_handler.bind()
+        self.__bind_window_movement_and_focus_loss_listeners()
         self._clock.update()
 
         while True:
@@ -87,9 +139,11 @@ class Game:
                     or game_variables.game_is_paused.get()
             ):
                 break
+
             self.update()
             self._clock.update()
             window.update()
+            self._first_frame_has_been_processed = True
 
     def update(self):
         if game_variables.power_ups_enabled.get():
@@ -129,6 +183,8 @@ class Game:
 
     def destroy(self):
         self.pause()
+        self._keyboard_handler.unbind()
+        self.__unbind_escape_keypress_listener()
 
         self._player_one_paddle.delete()
         self._ball.delete()
