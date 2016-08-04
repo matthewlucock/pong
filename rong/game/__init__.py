@@ -181,7 +181,6 @@ class Game:
         effects = []
         for effect in self._active_effects:
             effects.append(effect[0])
-        print(effects)
 
         self._player_one_paddle.update_position(
             delta_time=delta_time,

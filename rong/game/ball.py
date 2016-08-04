@@ -11,7 +11,7 @@ class Ball:
     @property
     def radius(self):
         return self.__BASE_RADIUS * self.radius_multiplier
-    
+
 
     def __reset(self):
         self.position = utilities.Vector(
@@ -62,6 +62,7 @@ class Ball:
             utilities.increment_tkinter_integer_variable(
                 variable=game_variables.player_two_score
             )
+            Ball.set_score_label()
             self.__reset()
         elif (
                 self.position.x > (
@@ -72,6 +73,7 @@ class Ball:
             utilities.increment_tkinter_integer_variable(
                 variable=game_variables.player_one_score
             )
+            Ball.set_score_label()
             self.__reset()
 
         self._check_bounce(intervals)
