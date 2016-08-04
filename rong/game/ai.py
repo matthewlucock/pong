@@ -2,12 +2,12 @@ from rong import utilities
 import random
 
 class AI:
-    def __init__(self, ball, paddle, difficulty):
-        self.ball = ball
+    def __init__(self, balls, paddle, difficulty):
+        self.balls = balls
         self.paddle = paddle
         self.difficulty = difficulty
 
-        self.height = paddle.SIZE.y
+        self.height = paddle.BASE_SIZE.y
 
         x_coord = paddle.position.x
         self.line = (
@@ -15,11 +15,11 @@ class AI:
             utilities.Vector(x_coord, 1)
         )
 
-    def _predict_possition(self):
+    def _predict_possition(self, ball):
         try:
             correct_prediction = utilities.get_line_collision(
-                self.ball._last_position,
-                self.ball.position,
+                ball._last_position,
+                ball.position,
                 *self.line
             )
         except ValueError:
@@ -31,8 +31,16 @@ class AI:
         )
         return prediction
 
+    def _get_closest_ball(self):
+        closest_ball = self.balls[0]
+        for ball in self.balls:
+            if (ball.position - self.paddle.position).magnitude <= (closest_ball.position - self.paddle.position).magnitude:
+                closest_ball = ball
+        return closest_ball
+
     def move(self, delta_time):
-        prediction = self._predict_possition()
+        ball = self._get_closest_ball()
+        prediction = self._predict_possition(ball)
         if prediction:
             if prediction.y > self.paddle.position.y:
                 self.paddle.update_position(

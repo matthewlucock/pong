@@ -9,6 +9,7 @@ from .physics import point_is_on_interval
 from .physics import point_is_on_this_side_of_interval
 from .physics import midpoint
 from .physics import vector_to_line
+import random
 
 def pack_widgets_as_vertical_list(
         widgets,
@@ -92,3 +93,9 @@ def get_canvas_circle_coordinates(centre, radius):
     return (
         (centre - radius_vector).tuple + (centre+radius_vector).tuple
     )
+
+def larger_than_zero_gaussian(mu, sigma):
+    gaussian = 0
+    while gaussian <= 0:
+        gaussian = random.gauss(mu, sigma)
+    return gaussian

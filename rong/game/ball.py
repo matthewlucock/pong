@@ -3,9 +3,15 @@ from rong import utilities, colors, game_variables
 
 class Ball:
     __BASE_RADIUS = 20
-    __VELOCITY_MULTIPLIER = 1000 #250
+    __VELOCITY_MAGNITUDE = 600 #250
     __OFF_SCREEN_DISTANCE_MULTIPLIER = 5
-    set_score_label = None
+    radius_multiplier = 1
+    velocity_multiplier = 1
+
+    @property
+    def radius(self):
+        return self.__BASE_RADIUS * self.radius_multiplier
+    
 
     def __reset(self):
         self.position = utilities.Vector(
@@ -22,7 +28,7 @@ class Ball:
         if random.randint(0, 1):
             velocity *= -1
 
-        velocity *= self.__VELOCITY_MULTIPLIER
+        velocity *= self.__VELOCITY_MAGNITUDE * self.velocity_multiplier
         return velocity
 
     def __ball_color_trace_callback(self, *args):
@@ -30,7 +36,6 @@ class Ball:
 
     def __init__(self, canvas):
         self._canvas = canvas
-        self.radius = self.__BASE_RADIUS
 
         self.__reset()
         self._last_position = self.position.copy()
@@ -40,7 +45,7 @@ class Ball:
                 centre=self.position,
                 radius=self.radius
             ),
-            width=0
+            width=0,
         )
 
         self.__ball_color_trace_callback()
@@ -57,7 +62,6 @@ class Ball:
             utilities.increment_tkinter_integer_variable(
                 variable=game_variables.player_two_score
             )
-            Ball.set_score_label()
             self.__reset()
         elif (
                 self.position.x > (
@@ -68,11 +72,12 @@ class Ball:
             utilities.increment_tkinter_integer_variable(
                 variable=game_variables.player_one_score
             )
-            Ball.set_score_label()
             self.__reset()
 
         self._check_bounce(intervals)
-        movement = self.velocity * delta_time
+        movement = self.velocity.get_at_magnitude(
+            delta_time * self.__VELOCITY_MAGNITUDE * self.velocity_multiplier
+        )
         self.position += movement
         self.update_position_on_canvas()
 
@@ -91,7 +96,7 @@ class Ball:
 
     def collides_with_power_up(self, power_up):
         return (
-            self.radius + power_up.RADIUS <= (self.position - power_up.position).magnitude
+            self.radius + power_up.RADIUS >= (self.position - power_up.position).magnitude
         )
 
     def _check_bounce(self, intervals):
@@ -139,7 +144,7 @@ class Ball:
                     )
                     new_velocity_direction = location_of_direction_from_collision - point_of_collision
                     self.velocity = new_velocity_direction.get_at_magnitude(
-                        self.__VELOCITY_MULTIPLIER
+                        self.__VELOCITY_MAGNITUDE * self.velocity_multiplier
                     )
             #        if collided_between_frames:
             #            new_displacement_from_collision = new_velocity_direction.get_at_magnitude(self.__A_LITTLE_BIT)

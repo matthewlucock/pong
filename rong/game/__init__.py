@@ -10,7 +10,7 @@ from .power_up import Power_Up
 import time, random
 
 class Game:
-    __MEAN_POWER_UP_TIME = 10
+    __MEAN_POWER_UP_TIME = 8
     __POWER_UP_TIME_DEVIATION = 2
 
     __PADDLE_MARGIN_FROM_EDGE_OF_SCREEN = 75
@@ -70,7 +70,7 @@ class Game:
     def __init__(self):
         window.update()
 
-        self._ball = Ball(canvas=self.canvas)
+        self._balls = [Ball(canvas=self.canvas)]
         self._player_one_paddle = Paddle(canvas=self.canvas)
 
         if game_variables.game_mode.get() == game_modes.ZEN:
@@ -83,7 +83,7 @@ class Game:
 
             if game_variables.game_mode.get() != game_modes.MULTIPLAYER:
                 self._ai = AI(
-                    ball=self._ball,
+                    balls=self._balls,
                     paddle=self._player_two_paddle,
                     difficulty = game_variables.versus_ai_difficulty.get()
                 )
@@ -131,7 +131,7 @@ class Game:
         game_variables.game_is_paused.set(False)
         self._keyboard_handler.bind()
         self.__bind_window_movement_and_focus_loss_listeners()
-        self._clock.update()
+        self._clock.calculate_delta_time()
 
         while True:
             if (
@@ -141,24 +141,47 @@ class Game:
                 break
 
             self.update()
-            self._clock.update()
             window.update()
             self._first_frame_has_been_processed = True
 
     def update(self):
-        if game_variables.power_ups_enabled.get():
+        delta_time = self._clock.calculate_delta_time()
+
+        if (
+                game_variables.power_ups_enabled.get()
+                and game_variables.game_mode.get() != game_modes.ZEN
+        ):
             for effect in self._active_effects:
                 if time.time() >= effect[1]:
+                    self._remove_effect(effect)
                     self._active_effects.remove(effect)
             for power_up in self._power_ups:
-                if self._ball.collides_with_power_up(power_up):
-                    self._active_effects.append((power_up.effect, time.time() + power_up.DURATION))
+                for ball in self._balls:
+                    if (
+                                ball.collides_with_power_up(power_up)
+                                and ball.last_hit_by
+                        ):
+                        self._active_effects.append(
+                            (
+                                power_up.effect,
+                                time.time() + power_up.EFFECT_DURATION,
+                                ball.last_hit_by
+                            )
+                        )
+                        self._apply_effect(power_up.effect, ball.last_hit_by)
+                        self._power_ups.remove(power_up)
+                        power_up.delete()
+                if time.time() >= power_up.end_time:
                     self._power_ups.remove(power_up)
+                    power_up.delete()
             if time.time() > self._next_power_up_time:
                 self._power_ups.append(Power_Up(self.canvas))
                 self._next_power_up_time = self._get_new_power_up_time()
 
-        delta_time = self._clock.calculate_delta_time()
+        effects = []
+        for effect in self._active_effects:
+            effects.append(effect[0])
+        print(effects)
 
         self._player_one_paddle.update_position(
             delta_time=delta_time,
@@ -179,7 +202,8 @@ class Game:
         else:
             intervals += list(self._player_two_paddle._intervals)
 
-        self._ball.update_position(delta_time, intervals)
+        for ball in self._balls:
+            ball.update_position(delta_time, intervals)
 
     def destroy(self):
         self.pause()
@@ -187,7 +211,16 @@ class Game:
         self.__unbind_escape_keypress_listener()
 
         self._player_one_paddle.delete()
-        self._ball.delete()
+
+        for ball in self._balls:
+            ball.delete()
+
+        for power_up in self._power_ups:
+            power_up.delete()
+        self._power_ups = []
+        for effect in self._active_effects:
+            self._remove_effect(effect)
+        self._active_effects = []
 
         if game_variables.game_mode.get() == game_modes.ZEN:
             self._zen_wall.delete()
@@ -197,7 +230,96 @@ class Game:
         game_variables.game_is_paused.set(False)
 
     def _get_new_power_up_time(self):
-        return time.time() + random.gauss(
+        return time.time() + utilities.larger_than_zero_gaussian(
             self.__MEAN_POWER_UP_TIME,
             self.__POWER_UP_TIME_DEVIATION
         )
+
+    def _apply_effect(self, effect, player):
+        if effect == Power_Up.MULTIPLE_BALLS:
+            self._balls.append(Ball(canvas = self.canvas))
+        elif effect == Power_Up.BALL_SPEED_BOOST:
+            Ball.velocity_multiplier *= 2
+        elif effect == Power_Up.UBER_BALL_SPEED_BOOST:
+            Ball.velocity_multiplier *= 4
+        elif effect == Power_Up.BALL_SPEED_REDUCTION:
+            Ball.velocity_multiplier /= 2
+        elif effect == Power_Up.ENGORGEMENT:
+            Ball.radius_multiplier *= 2
+        elif effect == Power_Up.ENSMALLMENT:
+            Ball.radius_multiplier /= 2
+        elif effect == Power_Up.OWN_PADDLE_SPEED_BOOST:
+            if player == 1:
+                self._player_one_paddle.velocity_multiplier *= 2
+            elif player == 2:
+                self._player_two_paddle.velocity_multiplier *= 2
+        elif effect == Power_Up.OTHER_PADDLE_SPEED_REDUCTION:
+            if player == 1:
+                self._player_two_paddle.velocity_multiplier /= 2
+            elif player == 2:
+                self._player_one_paddle.velocity_multiplier /= 2
+        elif effect == Power_Up.SELF_WIDENMENT:
+            if player == 1:
+                self._player_one_paddle.height_multiplier *= 2
+            elif player == 2:
+                self._player_two_paddle.height_multiplier *= 2
+        elif effect == Power_Up.OTHER_NARROWMENT:
+            if player == 1:
+                self._player_two_paddle.height_multiplier /= 2
+            elif player == 2:
+                self._player_one_paddle.height_multiplier /= 2
+        elif effect == Power_Up.LOCK_OPPONENT_ROTATION:
+            if player == 1:
+                self._player_two_paddle.can_rotate = False
+            elif player == 2:
+                self._player_one_paddle.can_rotate = False
+        elif effect == Power_Up.LOCK_OPPONENT_POSITION:
+            if player == 1:
+                self._player_two_paddle.can_move = False
+            elif player == 2:
+                self._player_one_paddle.can_move = False
+
+    def _remove_effect(self, effect):
+        if effect[0] == Power_Up.MULTIPLE_BALLS:
+            self._balls[1].delete()
+            self._balls.pop(1)
+        elif effect[0] == Power_Up.BALL_SPEED_BOOST:
+            Ball.velocity_multiplier /= 2
+        elif effect[0] == Power_Up.UBER_BALL_SPEED_BOOST:
+            Ball.velocity_multiplier /= 4
+        elif effect[0] == Power_Up.BALL_SPEED_REDUCTION:
+            Ball.velocity_multiplier *= 2
+        elif effect[0] == Power_Up.ENGORGEMENT:
+            Ball.radius_multiplier /= 2
+        elif effect[0] == Power_Up.ENSMALLMENT:
+            Ball.radius_multiplier *= 2
+        elif effect[0] == Power_Up.OWN_PADDLE_SPEED_BOOST:
+            if effect[2] == 1:
+                self._player_one_paddle.velocity_multiplier /= 2
+            elif effect[2] == 2:
+                self._player_two_paddle.velocity_multiplier /= 2
+        elif effect[0] == Power_Up.OTHER_PADDLE_SPEED_REDUCTION:
+            if effect[2] == 1:
+                self._player_two_paddle.velocity_multiplier *= 2
+            elif effect[2] == 2:
+                self._player_one_paddle.velocity_multiplier *= 2
+        elif effect[0] == Power_Up.SELF_WIDENMENT:
+            if effect[2] == 1:
+                self._player_one_paddle.height_multiplier /= 2
+            elif effect[2] == 2:
+                self._player_two_paddle.height_multiplier /= 2
+        elif effect[0] == Power_Up.OTHER_NARROWMENT:
+            if effect[2] == 1:
+                self._player_two_paddle.height_multiplier *= 2
+            elif effect[2] == 2:
+                self._player_one_paddle.height_multiplier *= 2
+        elif effect[0] == Power_Up.LOCK_OPPONENT_ROTATION:
+            if effect[2] == 1:
+                self._player_two_paddle.can_rotate = True
+            elif effect[2] == 2:
+                self._player_one_paddle.can_rotate = True
+        elif effect[0] == Power_Up.LOCK_OPPONENT_POSITION:
+            if effect[2] == 1:
+                self._player_two_paddle.can_move = True
+            elif effect[2] == 2:
+                self._player_one_paddle.can_move = True

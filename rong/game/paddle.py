@@ -2,9 +2,9 @@ import copy
 from rong import directions, game_variables, utilities, colors
 
 class Paddle:
-    SIZE = utilities.Vector(30, 150)
-    __DIAGONAL = SIZE / 2
-    __BASE_VELOCITY = utilities.Vector(500, 500)
+    BASE_SIZE = utilities.Vector(30, 150)
+    __BASE_DIAGONAL = BASE_SIZE / 2
+    __BASE_SPEED = 700
     __ROTATION_RATE = 10
     __BOUNDARY_PADDING = 50
 
@@ -22,12 +22,18 @@ class Paddle:
         "right": "l"
     }
 
+    @property
+    def diagonal(self):
+        final = self.__BASE_DIAGONAL.copy()
+        final.y *= self.height_multiplier
+        return final    
+
     def __new_points(self, new_position):
         points = [
-            new_position + self.__DIAGONAL.inverted,
-            new_position + self.__DIAGONAL.inverted_y,
-            new_position + self.__DIAGONAL,
-            new_position + self.__DIAGONAL.inverted_x
+            new_position + self.diagonal.inverted,
+            new_position + self.diagonal.inverted_y,
+            new_position + self.diagonal,
+            new_position + self.diagonal.inverted_x
         ]
 
         new_points = []
@@ -85,6 +91,11 @@ class Paddle:
         self._canvas.itemconfig(self._canvas_id, fill=colors.paddle.get())
 
     def __init__(self, canvas, in_right_half=False):
+        self.velocity_multiplier = 1
+        self.height_multiplier = 1
+        self.can_move = True
+        self.can_rotate = True
+
         self._canvas = canvas
         self._in_right_half = in_right_half
 
@@ -93,12 +104,12 @@ class Paddle:
             canvas.winfo_height()
         )
 
-        x_offset = self.__BOUNDARY_PADDING + self.SIZE.x / 2
+        x_offset = self.__BOUNDARY_PADDING + self.BASE_SIZE.x / 2
         if in_right_half:
             x_offset = (
                 self._canvas_size.x
                 - self.__BOUNDARY_PADDING
-                - self.SIZE.x / 2
+                - self.BASE_SIZE.x / 2
             )
 
         self._boundaries = [
@@ -157,11 +168,9 @@ class Paddle:
             self.__paddle_color_trace_callback
         )
 
-        self.velocity = copy.deepcopy(self.__BASE_VELOCITY)
-
     def update_position(self, delta_time, pressed_keys):
-        delta_speed = self.velocity.magnitude * delta_time
-        delta_rotation = self.__ROTATION_RATE * delta_time
+        frame_speed = self.__BASE_SPEED * self.velocity_multiplier * delta_time
+        frame_rotation = self.__ROTATION_RATE * self.velocity_multiplier * delta_time
 
         direction = directions.get_direction_from_keys(
             keys=pressed_keys,
@@ -178,10 +187,10 @@ class Paddle:
             direction.normalise()
             rotation_increment = 0
 
-        velocity = direction * delta_speed
+        velocity = direction * frame_speed
 
-        self.rotation += rotation_increment * delta_rotation
-        self.position += velocity
+        self.rotation += rotation_increment * frame_rotation * self.can_rotate
+        self.position += velocity * self.can_move
         self.update_position_on_canvas()
 
     def update_position_on_canvas(self):
