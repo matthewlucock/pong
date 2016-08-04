@@ -1,5 +1,5 @@
 import random
-from rong import utilities
+from rong import utilities, images
 import time
 
 class Power_Up:
@@ -77,13 +77,9 @@ class Power_Up:
 
         self._canvas = canvas
 
-        self._canvas_id = canvas.create_oval(
-            *utilities.get_canvas_circle_coordinates(
-                centre=self.position,
-                radius=self.RADIUS
-            ),
-            width=0,
-            fill=self._COLOURS[self._type]
+        self._canvas_id = canvas.create_image(
+            *self.position.tuple,
+            image=images.sprites[self._EFFECTS[self._type]]
         )
 
     def delete(self):
