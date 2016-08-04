@@ -1,0 +1,18 @@
+Power ups are designed to add an extra dimension to the Rong gameplay.
+
+If power ups are enabled, then, every so often, a circle with an icon on it may appear in the game. In order to use the power up, hit the ball into it. Some of them will be global, meaning that it doesn't matter who hit the ball into it, but for some, the power granted will specifically effect the player which last hit it, or their opponent. All of their effects are temporary, and all except for lock opponent rotation and lock opponent position are cumulative.
+
+Below is a comprehensive list of the power ups in the game, formatted name - type - icon - descrition:
+
+Multiple Balls - Global - UNKNOWN - Adds another ball into the game.
+Ball Speed Boost - Global - UNKNOWN - Increases the speed of all balls in the game.
+Uber Ball Speed Boost - Global - UNKNOWN - Like speed boost, but, more.
+Ball Speed Reduction - Global - UNKNOWN - Reduces the speed of all balls in the game.
+Engorgement - Global - UNKNOWN - Increases the size of all balls in the game.
+Ensmallment - Global - UNKNOWN - Decreases the size of all balls in the game.
+Own Paddle Speed Boost - Specific - UNKNOWN - Increases the player's paddle speed.
+Other Paddle Speed Reduction - Specific - UNKNOWN - Decreases the player's opponent's paddle speed.
+Self Widenment - Specific - UNKNOWN - Increases the vertical size of the player's paddle.
+Self Narrowment - Specific - UNKNOWN - Decreases the vertical size of the player's opponent's paddle.
+Lock Opponent Rotation - Specific - UNKNOWN - Prevents the player's opponnet's paddle from rotating.
+Lock Opponent Position - Specific - UNKNOWN - Prevents the player's opponent's paddle from moving (other than rotation).
