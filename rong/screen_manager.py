@@ -5,6 +5,7 @@ class _ScreenManager:
         self._current_screen = None
         self._previous_screen = None
         self.main_screen = None
+        self.game_screen = None
 
     def change_screen(self, screen_to_change_to):
         if self._current_screen:

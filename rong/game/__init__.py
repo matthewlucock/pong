@@ -16,19 +16,22 @@ class Game:
     __PADDLE_MARGIN_FROM_EDGE_OF_SCREEN = 75
     SCORE_LIMIT = 10
     current_game = None
+    canvas = None
+    score_label = None
 
-    def __init__(self, canvas):
-        self._canvas = canvas
-
+    def __init__(self):
         window.update()
 
-        self._ball = Ball(canvas=canvas)
-        self._player_one_paddle = Paddle(canvas=canvas)
+        self._ball = Ball(canvas=self.canvas)
+        self._player_one_paddle = Paddle(canvas=self.canvas)
 
         if game_variables.game_mode.get() == game_modes.ZEN:
-            self._zen_wall = ZenWall(canvas=canvas)
+            self._zen_wall = ZenWall(canvas=self.canvas)
         else:
-            self._player_two_paddle = Paddle(canvas=canvas, in_right_half=True)
+            self._player_two_paddle = Paddle(
+                canvas=self.canvas,
+                in_right_half=True
+            )
 
             if game_variables.game_mode.get() != game_modes.MULTIPLAYER:
                 self._ai = AI(
@@ -39,19 +42,29 @@ class Game:
 
         self._top_interval = (
             utilities.Vector(0, 0),
-            utilities.Vector(self._canvas.winfo_width(), 0)
+            utilities.Vector(self.canvas.winfo_width(), 0)
         )
         self._bottom_interval = (
-            utilities.Vector(0, self._canvas.winfo_height()),
+            utilities.Vector(0, self.canvas.winfo_height()),
             utilities.Vector(
-                self._canvas.winfo_width(),
-                self._canvas.winfo_height()
+                self.canvas.winfo_width(),
+                self.canvas.winfo_height()
             )
         )
 
         self._power_ups = []
         self._active_effects = []
         self._next_power_up_time = self._get_new_power_up_time()
+
+        game_variables.player_one_score.set(0)
+        game_variables.player_two_score.set(8)
+
+        if game_variables.game_mode.get() == game_modes.ZEN:
+            Game.score_label.pack_forget()
+        else:
+            Game.score_label.pack()
+
+        Ball.set_score_label()
 
         self._keyboard_handler = KeyboardHandler()
 
@@ -74,7 +87,6 @@ class Game:
                     or game_variables.game_is_paused.get()
             ):
                 break
-
             self.update()
             self._clock.update()
             window.update()
@@ -89,7 +101,7 @@ class Game:
                     self._active_effects.append((power_up.effect, time.time() + power_up.DURATION))
                     self._power_ups.remove(power_up)
             if time.time() > self._next_power_up_time:
-                self._power_ups.append(Power_Up(self._canvas))
+                self._power_ups.append(Power_Up(self.canvas))
                 self._next_power_up_time = self._get_new_power_up_time()
 
         delta_time = self._clock.calculate_delta_time()
@@ -116,8 +128,7 @@ class Game:
         self._ball.update_position(delta_time, intervals)
 
     def destroy(self):
-        if not game_variables.game_is_paused.get():
-            self.pause()
+        self.pause()
 
         self._player_one_paddle.delete()
         self._ball.delete()
@@ -127,8 +138,6 @@ class Game:
         else:
             self._player_two_paddle.delete()
 
-        game_variables.player_one_score.set(0)
-        game_variables.player_two_score.set(0)
         game_variables.game_is_paused.set(False)
 
     def _get_new_power_up_time(self):

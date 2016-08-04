@@ -1,10 +1,12 @@
 import tkinter
 from rong import custom_widgets, colors, images, game_variables, fonts, \
-    event_names, fonts, utilities
+    event_names, fonts, utilities, game_modes
 from rong.screen_manager import screen_manager
 from rong.custom_widgets import StyledButton, miscellaneous_widget_parameters
 from rong.game import Game
+from rong.game.ball import Ball
 from .settings_screen import settings_screen
+from . import game_over_screen
 
 
 _GUTTER_HEIGHT = 50
@@ -24,6 +26,7 @@ _score = tkinter.Label(
     foreground="white"
 )
 _score.pack(expand=True, side=tkinter.LEFT)
+Game.score_label = _score
 
 _pause_button_container = tkinter.Frame(master=_space_above_canvas)
 _pause_button_container.pack(side=tkinter.RIGHT)
@@ -37,7 +40,7 @@ _pause_glyph.pack(pady=10, padx=10)
 
 canvas = tkinter.Canvas(master=game_screen, highlightthickness=0)
 canvas.pack(fill=tkinter.BOTH, expand=True, pady=(0, _GUTTER_HEIGHT))
-
+Game.canvas = canvas
 
 def _pause_button_callback(*args):
     Game.current_game.pause()
@@ -148,16 +151,39 @@ game_variables.high_contrast_mode_enabled.trace(
 )
 
 
-def _set_score():
+def destroy():
+    Game.current_game.destroy()
+    _quit_confirmation_container.pack_forget()
+    _pause_menu_buttons.pack()
+    _pause_menu_container.place_forget()
+
+_player_one_score_observer_name = tkinter.StringVar()
+_player_two_score_observer_name = tkinter.StringVar()
+
+def set_score():
+    player_one_score = game_variables.player_one_score.get()
+    player_two_score = game_variables.player_two_score.get()
+    score_limit = game_variables.score_limit.get()
+
+    if (
+            game_variables.game_mode.get() != game_modes.ZEN and (
+                player_one_score >= score_limit
+                or player_two_score >= score_limit
+            )
+    ):
+        destroy()
+        game_over_screen.init()
+        screen_manager.change_screen(game_over_screen.game_over_screen)
+        return
+
     score_text = _SCORE_TEMPLATE.format(
-        player_one_score=game_variables.player_one_score.get(),
-        player_two_score=game_variables.player_two_score.get()
+        player_one_score=player_one_score,
+        player_two_score=player_two_score
     )
     _score.config(text=score_text)
 
-_set_score()
-game_variables.player_one_score.trace("w", lambda *args: _set_score())
-game_variables.player_two_score.trace("w", lambda *args: _set_score())
+Ball.set_score_label = set_score
+
 
 def _continue_button_callback(*args):
     _pause_menu_container.place_forget()
@@ -179,10 +205,7 @@ def _quit_cancel_button_callback(*args):
 
 
 def _quit_confirm_button_callback(*args):
-    Game.current_game.destroy()
-    _quit_confirmation_container.pack_forget()
-    _pause_menu_buttons.pack()
-    _pause_menu_container.place_forget()
+    destroy()
     screen_manager.change_screen(screen_manager.main_screen)
 
 
