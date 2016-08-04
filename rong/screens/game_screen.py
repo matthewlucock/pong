@@ -6,7 +6,7 @@ from rong.custom_widgets import StyledButton, miscellaneous_widget_parameters
 from rong.game import Game
 from rong.game.ball import Ball
 from .settings_screen import settings_screen
-from . import game_over_screen
+from . import help_screen, game_over_screen
 
 
 _GUTTER_HEIGHT = 50
@@ -198,6 +198,11 @@ def _settings_button_callback(*args):
     screen_manager.change_screen(settings_screen)
 
 
+def _help_button_callback(*args):
+    help_screen.back_button.source_screen = game_screen
+    screen_manager.change_screen(help_screen.help_screen)
+
+
 def _quit_button_callback(*args):
     _pause_menu_buttons.pack_forget()
     _quit_confirmation_container.pack(expand=True, anchor=tkinter.CENTER)
@@ -215,6 +220,7 @@ def _quit_confirm_button_callback(*args):
 
 _continue_button.bind(event_names.LEFT_CLICK, _continue_button_callback)
 _settings_button.bind(event_names.LEFT_CLICK, _settings_button_callback)
+_help_button.bind(event_names.LEFT_CLICK, _help_button_callback)
 _quit_button.bind(event_names.LEFT_CLICK, _quit_button_callback)
 _quit_cancel_button.bind(event_names.LEFT_CLICK, _quit_cancel_button_callback)
 _quit_confirm_button.bind(

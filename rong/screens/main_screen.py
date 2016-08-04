@@ -6,6 +6,7 @@ from .versus_ai_screen import versus_ai_screen
 from .multiplayer_screen import multiplayer_screen
 from .zen_screen import zen_screen
 from .settings_screen import settings_screen
+from . import help_screen
 
 
 main_screen = tkinter.Frame()
@@ -38,15 +39,27 @@ _menus_data = [
     {
         "master": _miscellaneous_menu,
         "buttons": [
-            {"text": "Settings", "screen": settings_screen}
-            # {"text": "Help", "screen": help_screen}
+            {"text": "Settings", "screen": settings_screen},
+            {
+                "text": "Help",
+                "screen": help_screen.help_screen,
+                "back_button": help_screen.back_button
+            }
         ]
     }
 ]
 
 
-def _make_function_that_changes_screen(screen_to_change_to):
-    return lambda *args: screen_manager.change_screen(screen_to_change_to)
+def _make_function_that_changes_screen(button_data):
+    def change_screen(*args):
+        back_button = button_data.get("back_button")
+
+        if back_button:
+            back_button.source_screen = main_screen
+
+        screen_manager.change_screen(button_data["screen"])
+
+    return change_screen
 
 
 for _individual_menu_data in _menus_data:
@@ -59,7 +72,7 @@ for _individual_menu_data in _menus_data:
         )
         _button.bind(
             event_names.LEFT_CLICK,
-            _make_function_that_changes_screen(_button_data["screen"])
+            _make_function_that_changes_screen(_button_data)
         )
         _menu_buttons.append(_button)
 

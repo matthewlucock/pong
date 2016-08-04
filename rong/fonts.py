@@ -18,3 +18,8 @@ button_font = Font(
 )
 
 checkbox_font = button_font
+
+help_button_font = Font(
+    family=DEFAULT_FONT_FACE,
+    size=25
+)
