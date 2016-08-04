@@ -13,6 +13,8 @@ class Game:
     __MEAN_POWER_UP_TIME = 8
     __POWER_UP_TIME_DEVIATION = 2
 
+    _ball_vertical_limit = 20
+
     __PADDLE_MARGIN_FROM_EDGE_OF_SCREEN = 75
     SCORE_LIMIT = 10
     current_game = None
@@ -120,8 +122,8 @@ class Game:
 
         self._clock = Clock()
         Game.current_game = self
-        self.resume()
 
+        self.resume()
 
     def pause(self):
         game_variables.game_is_paused.set(True)
@@ -203,6 +205,13 @@ class Game:
 
         for ball in self._balls:
             ball.update_position(delta_time, intervals)
+
+        for ball in self._balls:
+            if (
+                    ball.position.y < -self._ball_vertical_limit
+                    or ball.position.y > self.canvas.winfo_height() + self._ball_vertical_limit
+            ):
+                ball.reset()
 
     def destroy(self):
         self.pause()
