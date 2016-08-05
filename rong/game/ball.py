@@ -13,7 +13,7 @@ class Ball:
         return self.__BASE_RADIUS * self.radius_multiplier
 
 
-    def __reset(self):
+    def reset(self):
         self.position = utilities.Vector(
             self._canvas.winfo_width() / 2,
             self._canvas.winfo_height() / 2
@@ -37,7 +37,7 @@ class Ball:
     def __init__(self, canvas):
         self._canvas = canvas
 
-        self.__reset()
+        self.reset()
         self._last_position = self.position.copy()
 
         self._canvas_id = canvas.create_oval(
@@ -63,7 +63,7 @@ class Ball:
                 variable=game_variables.player_two_score
             )
             Ball.set_score_label()
-            self.__reset()
+            self.reset()
         elif (
                 self.position.x > (
                     self._canvas.winfo_width()
@@ -74,7 +74,7 @@ class Ball:
                 variable=game_variables.player_one_score
             )
             Ball.set_score_label()
-            self.__reset()
+            self.reset()
 
         self._check_bounce(intervals)
         movement = self.velocity.get_at_magnitude(
