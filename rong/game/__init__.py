@@ -10,7 +10,7 @@ from .power_up import Power_Up
 import time, random
 
 class Game:
-    __MEAN_POWER_UP_TIME = 8
+    __MEAN_POWER_UP_TIME = 4
     __POWER_UP_TIME_DEVIATION = 2
 
     __PADDLE_MARGIN_FROM_EDGE_OF_SCREEN = 75
