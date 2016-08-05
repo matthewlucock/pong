@@ -1,6 +1,6 @@
 The game menus are the portals to actually playing a game of Rong. There are three different game modes: Versus AI, Multiplayer, and Zen Mode, and the particular differences between these modes will be explained in their corresponding section.
 
-The game menus allow you to set the necessary settings before beginning the game. In the Versus AI menu, you may decide the difficulty of the AI player, and whether Power Ups and/or Free Movement is enabled.
+The game menus allow you to set the settings necessary to set before beginning the game. In the Versus AI menu, you may decide the difficulty of the AI player, and whether Power Ups and/or Free Movement is enabled.
 
 For Multiplayer you can choose whether Power Ups and/or Free Movement is enabled, and for Zen Mode you can choose whether Free Movement is enabled.
 

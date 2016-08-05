@@ -2,10 +2,11 @@ Power ups are designed to add an extra dimension to the Rong gameplay.
 
 If power ups are enabled, then, every so often, a circle with an icon on it may appear in the game. In order to use the power up, hit the ball into it. Some of them will be global, meaning that it doesn't matter who hit the ball into it, but for some, the power granted will specifically effect the player which last hit it, or their opponent. All of their effects are temporary, and all except for lock opponent rotation and lock opponent position are cumulative.
 
-Below is a comprehensive list of the power ups in the game, formatted name - type - icon - description:
+Below is a comprehensive list of the power ups in the game, formatted name - type - icon - descrition:
 
 Multiple Balls - Global - A black stone with a red symbol. - Adds another ball into the game.
 Ball Speed Boost - Global - A silver sphere with a purple symbol. - Increases the speed of all balls in the game.
+Uber Ball Speed Boost - Global - A blue sphere with a light blue symbol. - Like speed boost, but, more.
 Ball Speed Reduction - Global - A green sphere with a yellow symbol. - Reduces the speed of all balls in the game.
 Engorgement - Global - A deep blue potion. - Increases the size of all balls in the game.
 Ensmallment - Global - A red potion. - Decreases the size of all balls in the game.
