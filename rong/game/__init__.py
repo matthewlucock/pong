@@ -291,8 +291,6 @@ class Game:
             self._balls.pop(1)
         elif effect[0] == Power_Up.BALL_SPEED_BOOST:
             Ball.velocity_multiplier /= 2
-        elif effect[0] == Power_Up.UBER_BALL_SPEED_BOOST:
-            Ball.velocity_multiplier /= 4
         elif effect[0] == Power_Up.BALL_SPEED_REDUCTION:
             Ball.velocity_multiplier *= 2
         elif effect[0] == Power_Up.ENGORGEMENT:
