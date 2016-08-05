@@ -14,7 +14,6 @@ class Power_Up:
 
     MULTIPLE_BALLS = "multiple_balls"
     BALL_SPEED_BOOST = "ball_speed_boost"
-    UBER_BALL_SPEED_BOOST = "uber_ball_speed_boost"
     BALL_SPEED_REDUCTION = "ball_speed_reduction"
     ENGORGEMENT = "engorgement"
     ENSMALLMENT = "ensmallment"
@@ -28,7 +27,6 @@ class Power_Up:
     _EFFECTS = [
         MULTIPLE_BALLS,
         BALL_SPEED_BOOST,
-        UBER_BALL_SPEED_BOOST,
         BALL_SPEED_REDUCTION,
         ENGORGEMENT,
         ENSMALLMENT,
@@ -38,20 +36,6 @@ class Power_Up:
         OTHER_NARROWMENT,
         LOCK_OPPONENT_ROTATION,
         LOCK_OPPONENT_POSITION
-    ]
-    _COLOURS = [
-        "red",
-        "green",
-        "blue",
-        "yellow",
-        "red",
-        "green",
-        "blue",
-        "yellow",
-        "red",
-        "green",
-        "blue",
-        "yellow"
     ]
 
     def __init__(self, canvas):

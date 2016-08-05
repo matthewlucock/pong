@@ -46,8 +46,7 @@ _LIST_OF_SPRITES = [
     "other_narrowment",
     "other_paddle_speed_reduction",
     "own_paddle_speed_boost",
-    "self_widenment",
-    "uber_ball_speed_boost"
+    "self_widenment"
 ]
 
 sprites = {}

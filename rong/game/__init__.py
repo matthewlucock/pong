@@ -239,8 +239,6 @@ class Game:
             self._balls.append(Ball(canvas = self.canvas))
         elif effect == Power_Up.BALL_SPEED_BOOST:
             Ball.velocity_multiplier *= 2
-        elif effect == Power_Up.UBER_BALL_SPEED_BOOST:
-            Ball.velocity_multiplier *= 4
         elif effect == Power_Up.BALL_SPEED_REDUCTION:
             Ball.velocity_multiplier /= 2
         elif effect == Power_Up.ENGORGEMENT:
