@@ -4,15 +4,15 @@ If power ups are enabled, then, every so often, a circle with an icon on it may 
 
 Below is a comprehensive list of the power ups in the game, formatted name - type - icon - descrition:
 
-Multiple Balls - Global - UNKNOWN - Adds another ball into the game.
-Ball Speed Boost - Global - UNKNOWN - Increases the speed of all balls in the game.
-Uber Ball Speed Boost - Global - UNKNOWN - Like speed boost, but, more.
-Ball Speed Reduction - Global - UNKNOWN - Reduces the speed of all balls in the game.
-Engorgement - Global - UNKNOWN - Increases the size of all balls in the game.
-Ensmallment - Global - UNKNOWN - Decreases the size of all balls in the game.
-Own Paddle Speed Boost - Specific - UNKNOWN - Increases the player's paddle speed.
-Other Paddle Speed Reduction - Specific - UNKNOWN - Decreases the player's opponent's paddle speed.
-Self Widenment - Specific - UNKNOWN - Increases the vertical size of the player's paddle.
-Self Narrowment - Specific - UNKNOWN - Decreases the vertical size of the player's opponent's paddle.
-Lock Opponent Rotation - Specific - UNKNOWN - Prevents the player's opponnet's paddle from rotating.
-Lock Opponent Position - Specific - UNKNOWN - Prevents the player's opponent's paddle from moving (other than rotation).
+Multiple Balls - Global - A black stone with a red symbol. - Adds another ball into the game.
+Ball Speed Boost - Global - A silver sphere with a purple symbol. - Increases the speed of all balls in the game.
+Uber Ball Speed Boost - Global - A blue sphere with a light blue symbol. - Like speed boost, but, more.
+Ball Speed Reduction - Global - A green sphere with a yellow symbol. - Reduces the speed of all balls in the game.
+Engorgement - Global - A deep blue potion. - Increases the size of all balls in the game.
+Ensmallment - Global - A red potion. - Decreases the size of all balls in the game.
+Own Paddle Speed Boost - Specific - A white stone with a blue symbol. - Increases the player's paddle speed.
+Other Paddle Speed Reduction - Specific - A grey stone with an orange symbol. - Decreases the player's opponent's paddle speed.
+Self Widenment - Specific - A light blue potion. - Increases the vertical size of the player's paddle.
+Other Paddle Narrowment - Specific - A brown potion. - Decreases the vertical size of the player's opponent's paddle.
+Lock Opponent Rotation - Specific - A yellow potion. - Prevents the player's opponnet's paddle from rotating.
+Lock Opponent Position - Specific - A red sphere with a yellow symbol. - Prevents the player's opponent's paddle from moving (other than rotation).

@@ -14,7 +14,6 @@ _help_file_text = tkinter.Message(
     master=help_file_screen,
     width=600,
     foreground="white",
-    font="Arial 15",
     justify=tkinter.CENTER
 )
 _help_file_text.pack(expand=True)
@@ -23,10 +22,12 @@ _back_button = custom_widgets.BackButton(master=help_file_screen)
 _back_button.pack(pady=(0, 20))
 
 
-def init(title, text):
-    _title.config(text=title)
-    _help_file_text.config(text=text)
+def init(title, text, font_size=None):
+    if font_size is None:
+        font_size = 15
 
+    _title.config(text=title)
+    _help_file_text.config(text=text, font="Arial " + str(font_size))
 
 _widgets_to_update_background_of = [
     help_file_screen,

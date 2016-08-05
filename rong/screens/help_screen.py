@@ -40,7 +40,7 @@ _GAMEPLAY_HELP_FILES_LIST = [
     {"title": "Versus AI", "file_name": "07 Versus AI"},
     {"title": "Multiplayer", "file_name": "08 Multiplayer"},
     {"title": "Zen mode", "file_name": "09 Zen Mode"},
-    {"title": "Power-ups", "file_name": "10 Power Ups"},
+    {"title": "Power-ups", "file_name": "10 Power Ups", "font_size": 10},
     {"title": "Free movement", "file_name": "11 Free Movement"}
 ]
 
@@ -58,9 +58,9 @@ for _help_screen_data in (_MENUS_HELP_FILES_LIST + _GAMEPLAY_HELP_FILES_LIST):
         _help_files_text[_file_name] = _file.read()
 
 
-def _make_change_to_help_file_screen_function(title, text):
+def _make_change_to_help_file_screen_function(**kwargs):
     def change_to_help_file_screen(*args):
-        help_file_screen.init(title=title, text=text)
+        help_file_screen.init(**kwargs)
         screen_manager.change_screen(help_file_screen.help_file_screen)
         pass
 
@@ -80,7 +80,8 @@ for _individual_menu_data in _menus_data:
             event_names.LEFT_CLICK,
             _make_change_to_help_file_screen_function(
                 title=_button_data["title"],
-                text=_help_files_text[_button_data["file_name"]]
+                text=_help_files_text[_button_data["file_name"]],
+                font_size=_button_data.get("font_size")
             )
         )
         _menu_buttons.append(_button)
