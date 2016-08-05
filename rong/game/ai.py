@@ -24,7 +24,7 @@ class AI:
             )
         except ValueError:
             return
-        standard_deviation = self.height * (-self.difficulty + 10.5)#(-self.difficulty/2 + 5.5)#(-self.difficulty/4 + 3)#(-self.difficulty/6 + 13/6)
+        standard_deviation = self.height * (-0.33 * self.difficulty + 3.83)#(-self.difficulty + 10.5)#(-self.difficulty/2 + 5.5)#(-self.difficulty/4 + 3)#(-self.difficulty/6 + 13/6)
         prediction = utilities.Vector(
             correct_prediction.x,
             random.gauss(correct_prediction.y, standard_deviation)
